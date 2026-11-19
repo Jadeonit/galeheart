@@ -1,0 +1,18 @@
+# build output
+target/
+build/
+build-manual/
+*.jar
+
+# ide
+.idea/
+*.iml
+.vscode/
+
+# os
+Thumbs.db
+.DS_Store
+
+# python
+__pycache__/
+*.pyc

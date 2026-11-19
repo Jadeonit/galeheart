@@ -1,0 +1,28 @@
+name: PortalBlock
+version: 1.1.0
+main: ru.orbital.portalblock.PortalBlockPlugin
+api-version: '1.21'
+description: Seals the Nether and the End behind permissions
+authors: [ Server ]
+
+commands:
+  portalblock:
+    description: Manage PortalBlock
+    usage: /portalblock reload
+    aliases: [ pblock ]
+    permission: portalblock.admin
+    permission-message: 'Unknown command.'
+
+permissions:
+  portalblock.admin:
+    description: Access to /portalblock
+    default: op
+  portalblock.bypass:
+    description: Allows travelling through gated portals
+    default: op
+  galeheart.nether:
+    description: Grants access to the Nether (granted by GaleHeartCore)
+    default: false
+  galeheart.end:
+    description: Grants access to the End (granted by GaleHeartCore)
+    default: false

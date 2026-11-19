@@ -1,0 +1,139 @@
+package ru.galeheart.core.data;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import ru.galeheart.core.GaleHeartCore;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+/** Flat YAML storage: one section per player. */
+public final class DataStore {
+
+    private final GaleHeartCore plugin;
+    private final File file;
+    private final Map<UUID, PlayerData> cache = new HashMap<>();
+
+    private YamlConfiguration data = new YamlConfiguration();
+
+    public DataStore(GaleHeartCore plugin) {
+        this.plugin = plugin;
+        this.file = new File(plugin.getDataFolder(), "data.yml");
+    }
+
+    public void load() {
+        if (file.exists()) {
+            data = YamlConfiguration.loadConfiguration(file);
+        }
+        cache.clear();
+    }
+
+    public PlayerData get(UUID id) {
+        return cache.computeIfAbsent(id, this::read);
+    }
+
+    private PlayerData read(UUID id) {
+        PlayerData player = new PlayerData(id);
+        player.hearts = plugin.getConfig().getInt("hearts.start", 3);
+
+        ConfigurationSection section = data.getConfigurationSection(id.toString());
+        if (section == null) {
+            return player;
+        }
+        player.name = section.getString("name", "");
+        player.hearts = section.getInt("hearts", player.hearts);
+        player.firstJoin = section.getLong("first-join", 0L);
+        player.lastDeath = section.getLong("last-death", 0L);
+        player.lastKill = section.getLong("last-kill", 0L);
+        player.protectionUntil = section.getLong("protection-until", 0L);
+
+        ConfigurationSection quests = section.getConfigurationSection("quests");
+        if (quests != null) {
+            for (String key : quests.getKeys(false)) {
+                String value = quests.getString(key);
+                if (value == null) {
+                    continue;
+                }
+                player.questsDone.add(key);
+            }
+        }
+        ConfigurationSection progress = section.getConfigurationSection("progress");
+        if (progress != null) {
+            for (String key : progress.getKeys(false)) {
+                player.questProgress.put(key, progress.getInt(key));
+            }
+        }
+        return player;
+    }
+
+    /** Persists one player into the in-memory config (no disk write). */
+    public void write(PlayerData player) {
+        String path = player.id.toString();
+        data.set(path + ".name", player.name);
+        data.set(path + ".hearts", player.hearts);
+        data.set(path + ".first-join", player.firstJoin);
+        data.set(path + ".last-death", player.lastDeath);
+        data.set(path + ".last-kill", player.lastKill);
+        data.set(path + ".protection-until", player.protectionUntil);
+        data.set(path + ".progress", null);
+        for (Map.Entry<String, Integer> entry : player.questProgress.entrySet()) {
+            data.set(path + ".progress." + entry.getKey(), entry.getValue());
+        }
+        data.set(path + ".quests", null);
+        for (String quest : player.questsDone) {
+            data.set(path + ".quests." + quest, "done");
+        }
+    }
+
+    public void save(PlayerData player) {
+        write(player);
+        flush();
+    }
+
+    public void saveAll() {
+        for (PlayerData player : cache.values()) {
+            write(player);
+        }
+        flush();
+    }
+
+    private void flush() {
+        try {
+            data.save(file);
+        } catch (IOException exception) {
+            plugin.getLogger().warning("Could not save data.yml: " + exception.getMessage());
+        }
+    }
+
+    /** Season reset: wipe every player's hearts and progress. */
+    public void resetAll() {
+        data = new YamlConfiguration();
+        for (PlayerData player : cache.values()) {
+            player.hearts = plugin.getConfig().getInt("hearts.start", 3);
+            player.lastDeath = 0L;
+            player.lastKill = 0L;
+            player.protectionUntil = 0L;
+            player.questProgress.clear();
+            player.questsDone.clear();
+            write(player);
+        }
+        flush();
+    }
+
+    public List<PlayerData> top() {
+        List<PlayerData> all = new ArrayList<>(cache.values());
+        all.sort(Comparator.comparingInt((PlayerData p) -> p.hearts).reversed()
+                .thenComparing(p -> p.name == null ? "" : p.name));
+        return all;
+    }
+
+    public Map<UUID, PlayerData> cache() {
+        return cache;
+    }
+}

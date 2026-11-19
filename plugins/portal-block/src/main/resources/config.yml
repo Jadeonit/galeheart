@@ -1,0 +1,28 @@
+# PortalBlock — seals the Nether and the End behind permissions.
+enabled: true
+
+# Fallback message, used when a gate has no message of its own.
+message: "&5&oSomething inside refuses to let you through..."
+
+# Minimum interval between messages, in seconds (0 = every attempt).
+message-cooldown-seconds: 5
+
+# Don't let players physically step into a portal block,
+# so the purple portal overlay never appears.
+block-movement: true
+
+# If a player still ends up inside a portal (login, plugin teleport, etc.),
+# move them to the nearest safe block outside it.
+push-out: true
+
+# A gate is open when its permission is empty.
+# GaleHeartCore grants galeheart.nether / galeheart.end after the quest.
+portals:
+  nether:
+    enabled: true
+    permission: "galeheart.nether"
+    message: "&5&oThe way to the Nether is sealed. Complete the Nether Key."
+  end:
+    enabled: true
+    permission: "galeheart.end"
+    message: "&5&oThe End is sealed. Complete the End Key."

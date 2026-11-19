@@ -1,0 +1,31 @@
+name: GaleHeartCore
+version: '${project.version}'
+main: ru.galeheart.core.GaleHeartCore
+api-version: '1.21'
+authors: [ GaleHeart ]
+description: Hearts, cooldowns, heart cooling, seasons and quests.
+
+commands:
+  hearts:
+    description: Show your hearts
+    usage: /hearts
+    aliases: [ heart, hp ]
+  top:
+    description: Hearts leaderboard
+    usage: /top
+    aliases: [ leaderboard, lb ]
+  season:
+    description: Season info and admin controls
+    usage: /season
+    aliases: [ s ]
+  quest:
+    description: Quest progress
+    usage: /quest
+
+permissions:
+  galeheart.admin:
+    description: Full admin access
+    default: op
+  galeheart.bypass.protection:
+    description: Ignores new-player protection
+    default: op

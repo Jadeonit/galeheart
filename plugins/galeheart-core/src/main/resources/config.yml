@@ -1,0 +1,56 @@
+# GaleHeartCore — hearts, cooldowns, cooling, seasons, quests
+
+prefix: "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> "
+
+hearts:
+  # Hearts a new player starts with. 1 heart = 2 HP.
+  start: 3
+  min: 1
+  max: 10
+
+  item:
+    material: NETHER_STAR
+    name: "<red><bold>Heart"
+    lore:
+      - "<gray>Right-click to gain <red>+1 heart"
+      - "<dark_gray>Max {max} hearts"
+
+protection:
+  # New players are fully immune to players for this many hours after first join.
+  new-player-hours: 24
+  # After a death a player cannot lose another heart for this long.
+  death-cooldown-seconds: 180
+  # Combat tag: blocks duels/teleports after taking or dealing player damage.
+  combat-tag-seconds: 15
+
+cooling:
+  # Hearts above this value decay without PvP kills.
+  enabled: true
+  above: 8
+  hours-without-kill: 48
+
+season:
+  # Finale: everyone drops to one heart for this long.
+  one-heart-seconds: 1800
+  # Finale: world border size and how long it takes to shrink.
+  border-size: 500
+  border-shrink-seconds: 600
+  # Border restored to this on season reset / finale end.
+  default-border: 60000
+
+# Quest step format: TYPE:ARG:AMOUNT
+#   KILL_MOB:<EntityType>:<amount>
+#   COLLECT_ITEM:<Material>:<amount>   (items are consumed on completion)
+quests:
+  nether:
+    display: "<dark_purple>The Nether Key"
+    permission: "galeheart.nether"
+    steps:
+      - "KILL_MOB:ZOMBIE:50"
+      - "COLLECT_ITEM:DIAMOND:16"
+  end:
+    display: "<light_purple>The End Key"
+    permission: "galeheart.end"
+    steps:
+      - "KILL_MOB:BLAZE:30"
+      - "COLLECT_ITEM:ENDER_PEARL:16"
