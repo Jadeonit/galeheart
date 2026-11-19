@@ -6,6 +6,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.galeheart.core.GaleHeartCore;
+import ru.galeheart.core.combat.CombatManager;
 import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.util.Msg;
 
@@ -76,7 +77,8 @@ public final class HeartManager {
         long now = System.currentTimeMillis();
         long cooldownMs = plugin.getConfig().getLong("protection.death-cooldown-seconds", 180L) * 1000L;
 
-        boolean canLose = !data.protectedNow() && now - data.lastDeath >= cooldownMs;
+        boolean bypass = victim.hasPermission(CombatManager.BYPASS);
+        boolean canLose = (bypass || !data.protectedNow()) && now - data.lastDeath >= cooldownMs;
         if (canLose && data.hearts > min()) {
             data.hearts -= 1;
             data.lastDeath = now;

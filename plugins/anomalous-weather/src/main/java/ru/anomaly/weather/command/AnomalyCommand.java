@@ -74,7 +74,7 @@ public final class AnomalyCommand implements CommandExecutor, TabCompleter {
                     messages.send(sender, "list-entry",
                             "weather", weatherSettings.displayName,
                             "chance", String.format(Locale.ROOT, "%.1f", manager.effectiveChance(weatherSettings.type)),
-                            "state", weatherSettings.enabled ? "<green>вкл" : "<red>выкл",
+                            "state", weatherSettings.enabled ? "<green>on" : "<red>off",
                             "protection", plugin.protectionManager().itemName(weatherSettings.type));
                 }
             }
@@ -193,13 +193,13 @@ public final class AnomalyCommand implements CommandExecutor, TabCompleter {
 
     private static String slotName(String slot) {
         return switch (slot) {
-            case "HEAD" -> "голова";
-            case "CHEST" -> "нагрудник";
-            case "LEGS" -> "штаны";
-            case "FEET" -> "сапоги";
-            case "OFF_HAND" -> "левая рука";
-            case "MAIN_HAND" -> "правая рука";
-            default -> "любой слот";
+            case "HEAD" -> "head";
+            case "CHEST" -> "chest";
+            case "LEGS" -> "legs";
+            case "FEET" -> "feet";
+            case "OFF_HAND" -> "off hand";
+            case "MAIN_HAND" -> "main hand";
+            default -> "any slot";
         };
     }
 

@@ -1,69 +1,69 @@
 # ═════════════════════════════════════════════════════════════════════════
-#  AnomalousWeather — аномальная погода (Paper 1.21+)
+#  AnomalousWeather — weather anomalies (Paper 1.21+)
 #
-#  ВАЖНО: обычная (ванильная) погода НЕ удаляется и НЕ отключается.
-#  Аномалия работает ПОВЕРХ обычной погоды и выделяется:
-#    • BossBar с названием аномалии и таймером
-#    • частицы вокруг игроков и уникальные звуки
-#    • тайтл при старте и подсказки в actionbar
-#    • «личный» дождь для каждого игрока (visual-fake-weather)
-#  Серверная погода меняется ТОЛЬКО если override-vanilla-weather: true,
-#  и после окончания аномалии она возвращается в прежнее состояние.
+#  Vanilla weather is NOT removed or disabled. An anomaly runs on top of it
+#  and stands out with:
+#    • a BossBar with the anomaly name and a timer
+#    • particles around players and unique sounds
+#    • a full-screen title on start and actionbar hints
+#    • a personal (client-side) rain overlay per player
+#  Server weather changes ONLY when override-vanilla-weather is true,
+#  and is restored to its previous state when the anomaly ends.
 #
-#  Цвета и текст — в формате MiniMessage: <green>, <bold>, <gradient:#...>
-#  Также поддерживаются старые коды через & (например &a).
+#  Colors and text use MiniMessage: <green>, <bold>, <gradient:#...>
+#  Legacy & codes are also supported.
 # ═════════════════════════════════════════════════════════════════════════
 
 settings:
-  # В каких мирах работают аномалии. "*" — все миры.
+  # Worlds where anomalies run. "*" — every world.
   worlds:
     - "*"
 
-  # true — аномалия может начаться только во время ванильного дождя/грозы.
-  # Ванильная погода при этом не меняется.
+  # true — an anomaly can only start while vanilla rain/thunder is active.
+  # Vanilla weather itself is not changed.
   require-vanilla-rain: false
 
-  # true — на время аномалии серверная погода станет дождливой
-  # (и вернётся обратно после). false — плагин вообще не трогает
-  # обычную погоду сервера (рекомендуется).
+  # true — the server weather becomes rainy for the duration of the anomaly
+  # (and is restored afterwards). false — the plugin never touches server
+  # weather (recommended).
   override-vanilla-weather: false
 
-  # true — игрок видит «личный» дождь (только визуал клиента), чтобы
-  # аномалия выделялась даже в ясную погоду. На других игроков и на
-  # погоду сервера это не влияет.
+  # true — the player sees personal rain (client-side only) so the anomaly
+  # is visible even in clear weather. Other players and server weather are
+  # not affected.
   visual-fake-weather: true
 
-  # Как часто проверять, не начать ли аномалию (в секундах).
+  # How often to roll for an anomaly (seconds).
   check-interval-seconds: 90
 
-  # Шанс (%), что при проверке начнётся какая-нибудь аномалия.
+  # Chance (%) that a roll starts an anomaly.
   anomaly-chance-percent: 35
 
-  # Минимум игроков онлайн, чтобы случайная аномалия началась.
-  # Нужно, чтобы события не сгорали в пустоту ночью. 1 — достаточно одного,
-  # 0 — проверку отключить.
+  # Minimum players online for a random anomaly to start.
+  # Keeps events from firing into an empty server at night.
+  # 1 — one player is enough, 0 — no check.
   min-players: 1
 
-  # Пауза после окончания аномалии до следующей проверки (в секундах).
+  # Cooldown after an anomaly ends before the next roll (seconds).
   cooldown:
     min-seconds: 180
     max-seconds: 480
 
-  # Длительность аномалии по умолчанию (в секундах).
-  # Можно переопределить внутри каждой аномалии (duration.min/max-seconds).
+  # Default anomaly duration (seconds).
+  # Can be overridden per anomaly (duration.min/max-seconds).
   duration:
     min-seconds: 120
     max-seconds: 240
 
-  # Радиус (в блоках) для частиц и урона по мобам.
+  # Radius (blocks) for particles and mob damage.
   effect-radius: 12
 
-  # Не задевать игроков в креативе/наблюдателях.
+  # Do not affect creative/spectator players.
   ignore-creative: true
   ignore-spectator: true
 
-  # Если указать ноду (например anomalousweather.immune), игроки с ней
-  # не получают эффекты аномалий. Пусто — выключено.
+  # If set (e.g. anomalousweather.immune), players with this node
+  # are unaffected by anomalies. Empty — disabled.
   immunity-permission: ""
 
   announce:
@@ -73,19 +73,18 @@ settings:
     bossbar: true
     actionbar-warning: true
 
-  # Как часто (в секундах) напоминать в actionbar о нужной защите.
+  # How often (seconds) to remind about the required protection.
   warning-interval-seconds: 10
 
-  # Предупреждение о будущей аномалии: обратный отсчёт в BossBar
-  # и анонсы в чат на заданных отметках.
+  # Countdown before an anomaly starts: BossBar timer and chat warnings.
   warning:
     enabled: true
-    # За сколько секунд до старта начинается отсчёт (3600 = ровно за час).
+    # How many seconds before the start the countdown begins (3600 = one hour).
     lead-seconds: 3600
-    # На каких отметках (секунд до старта) писать в чат и играть звук.
-    # Отметки больше lead-seconds игнорируются.
+    # Moments (seconds before start) to announce in chat and play a sound.
+    # Values above lead-seconds are ignored.
     announce-at-seconds: [ 3600, 1800, 600, 300, 60 ]
-    # Показывать обратный отсчёт в отдельном BossBar.
+    # Show the countdown in a separate BossBar.
     bossbar: true
     sound:
       enabled: true
@@ -94,48 +93,48 @@ settings:
       pitch: 1.1
 
 # ═════════════════════════════════════════════════════════════════════════
-#  АНОМАЛИИ
+#  ANOMALIES
 #
-#  chance — вес аномалии: чем больше, тем чаще она выбирается.
-#  Итоговый шанс = вес / сумма весов всех включённых аномалий.
-#  Посмотреть текущие шансы: /anomaly list
+#  chance — weight: higher means more often.
+#  Effective chance = weight / sum of weights of enabled anomalies.
+#  See current chances with /anomaly list.
 #
-#  Общие ключи аномалии:
-#    enabled              — включена ли аномалия
-#    chance               — вес (шанс) аномалии
-#    display-name         — название в BossBar и сообщениях
-#    title / subtitle     — большой текст при старте аномалии
+#  Common keys:
+#    enabled              — is the anomaly active
+#    chance               — weight
+#    display-name         — name in the BossBar and messages
+#    title / subtitle     — big text on start
 #    bossbar-color        — PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE
-#    fake-weather         — DOWNFALL (дождь), CLEAR (ясно), NONE (не менять)
-#    vanilla-thunder      — грозу включать (только при override-vanilla-weather)
-#    duration.min/max-seconds — длительность (сек), перекрывает глобальную
-#    require-sky          — действует только под открытым небом
-#    water-protects       — в воде эффект не действует (для кислоты)
-#    affect-mobs          — задевать мобов рядом с игроками
-#    damage.amount        — урон за раз в единицах здоровья (2.0 = 1 сердце)
-#    damage.interval-seconds — как часто наносить урон
-#    armor-durability-damage — сколько прочности снимать с брони
-#    effects              — список эффектов "ТИП:УРОВЕНЬ:ТИКИ"
-#    particles            — type, color (для DUST), size, count, radius
+#    fake-weather         — DOWNFALL (rain), CLEAR, NONE
+#    vanilla-thunder      — enable thunder (only with override-vanilla-weather)
+#    duration.min/max-seconds — duration, overrides the global one
+#    require-sky          — only applies under open sky
+#    water-protects       — water blocks the effect (acid rain)
+#    affect-mobs          — damage nearby mobs
+#    damage.amount        — damage per tick in health points (2.0 = 1 heart)
+#    damage.interval-seconds — how often damage is applied
+#    armor-durability-damage — durability removed from armor
+#    effects              — list of "TYPE:AMPLIFIER:TICKS"
+#    particles            — type, color (DUST), size, count, radius
 #    sound                — key, volume, pitch, interval-seconds
 #
-#  Особые ключи:
-#    fire-ticks           — горение без защиты (20 тиков = 1 сек)
-#    freeze-ticks         — заморозка без защиты (200 тиков = максимум)
-#    lightning.*          — молнии (THUNDERSTORM)
-#    teleport.*           — телепортация (VOID_STORM)
+#  Special keys:
+#    fire-ticks           — burn ticks without protection (20 ticks = 1 s)
+#    freeze-ticks         — freeze ticks without protection (200 = max)
+#    lightning.*          — lightning (THUNDERSTORM)
+#    teleport.*           — teleportation (VOID_STORM)
 # ═════════════════════════════════════════════════════════════════════════
 weathers:
 
-  # ── 1. КИСЛОТНЫЙ ДОЖДЬ ─────────────────────────────────────────────────
-  #    Разъедает игроков и ломает броню. Защита — кислотостойкий шлем.
-  #    В воде кислота не действует (water-protects).
+  # ── 1. ACID RAIN ──────────────────────────────────────────────────────
+  #    Eats players and armor. Protection: acid-proof helmet.
+  #    Water blocks the effect (water-protects).
   ACID_RAIN:
     enabled: true
     chance: 25
-    display-name: "<dark_green>☣ Кислотный дождь"
-    title: "<dark_green><bold>☣ КИСЛОТНЫЙ ДОЖДЬ</bold>"
-    subtitle: "<gray>Наденьте <green>кислотостойкий шлем<gray>!"
+    display-name: "<dark_green>☣ Acid Rain"
+    title: "<dark_green><bold>☣ ACID RAIN</bold>"
+    subtitle: "<gray>Wear the <green>acid-proof helmet<gray>!"
     bossbar-color: GREEN
     fake-weather: DOWNFALL
     vanilla-thunder: false
@@ -164,14 +163,14 @@ weathers:
       pitch: 0.55
       interval-seconds: 6
 
-  # ── 2. ОГНЕННЫЙ ДОЖДЬ ─────────────────────────────────────────────────
-  #    Поджигает всё под открытым небом. Защита — огнеупорная мантия.
+  # ── 2. FIRE RAIN ──────────────────────────────────────────────────────
+  #    Burns everything under open sky. Protection: fireproof cloak.
   FIRE_RAIN:
     enabled: true
     chance: 18
-    display-name: "<red>☄ Огненный дождь"
-    title: "<red><bold>☄ ОГНЕННЫЙ ДОЖДЬ</bold>"
-    subtitle: "<gray>Наденьте <gold>огнеупорную мантию<gray>!"
+    display-name: "<red>☄ Fire Rain"
+    title: "<red><bold>☄ FIRE RAIN</bold>"
+    subtitle: "<gray>Wear the <gold>fireproof cloak<gray>!"
     bossbar-color: RED
     fake-weather: CLEAR
     vanilla-thunder: false
@@ -197,14 +196,14 @@ weathers:
       pitch: 0.7
       interval-seconds: 5
 
-  # ── 3. СНЕЖНАЯ БУРЯ ───────────────────────────────────────────────────
-  #    Замораживает и замедляет. Защита — утеплённые сапоги.
+  # ── 3. BLIZZARD ───────────────────────────────────────────────────────
+  #    Freezes and slows. Protection: insulated boots.
   BLIZZARD:
     enabled: true
     chance: 15
-    display-name: "<aqua>❄ Снежная буря"
-    title: "<aqua><bold>❄ СНЕЖНАЯ БУРЯ</bold>"
-    subtitle: "<gray>Наденьте <white>утеплённые сапоги<gray>!"
+    display-name: "<aqua>❄ Blizzard"
+    title: "<aqua><bold>❄ BLIZZARD</bold>"
+    subtitle: "<gray>Wear the <white>insulated boots<gray>!"
     bossbar-color: BLUE
     fake-weather: DOWNFALL
     vanilla-thunder: false
@@ -231,14 +230,14 @@ weathers:
       pitch: 1.4
       interval-seconds: 7
 
-  # ── 4. ПЕСЧАНАЯ БУРЯ ──────────────────────────────────────────────────
-  #    Слепит, иссушает голодом и замедляет. Защита — пылезащитные штаны.
+  # ── 4. SANDSTORM ──────────────────────────────────────────────────────
+  #    Blinds, drains hunger, slows. Protection: dust guard.
   SANDSTORM:
     enabled: true
     chance: 14
-    display-name: "<gold>≋ Песчаная буря"
-    title: "<gold><bold>≋ ПЕСЧАНАЯ БУРЯ</bold>"
-    subtitle: "<gray>Наденьте <yellow>пылезащитные штаны<gray>!"
+    display-name: "<gold>≋ Sandstorm"
+    title: "<gold><bold>≋ SANDSTORM</bold>"
+    subtitle: "<gray>Wear the <yellow>dust guard<gray>!"
     bossbar-color: YELLOW
     fake-weather: CLEAR
     vanilla-thunder: false
@@ -266,15 +265,15 @@ weathers:
       pitch: 0.7
       interval-seconds: 4
 
-  # ── 5. ТОКСИЧНЫЙ ТУМАН ────────────────────────────────────────────────
-  #    Травит даже под крышей (require-sky: false).
-  #    Защита — свинцовая маска.
+  # ── 5. TOXIC FOG ──────────────────────────────────────────────────────
+  #    Poisons even indoors (require-sky: false).
+  #    Protection: lead mask.
   TOXIC_FOG:
     enabled: true
     chance: 12
-    display-name: "<dark_purple>☠ Токсичный туман"
-    title: "<dark_purple><bold>☠ ТОКСИЧНЫЙ ТУМАН</bold>"
-    subtitle: "<gray>Наденьте <dark_gray>свинцовую маску<gray>!"
+    display-name: "<dark_purple>☠ Toxic Fog"
+    title: "<dark_purple><bold>☠ TOXIC FOG</bold>"
+    subtitle: "<gray>Wear the <dark_gray>lead mask<gray>!"
     bossbar-color: PURPLE
     fake-weather: DOWNFALL
     vanilla-thunder: false
@@ -303,14 +302,15 @@ weathers:
       pitch: 0.6
       interval-seconds: 6
 
-  # ── 6. ГРОЗОВАЯ АНОМАЛИЯ ──────────────────────────────────────────────
-  #    Частые молнии в игроков без защиты. Защита — громоотвод (левая рука).
+  # ── 6. THUNDERSTORM ───────────────────────────────────────────────────
+  #    Frequent lightning at unprotected players.
+  #    Protection: lightning charm (off hand).
   THUNDERSTORM:
     enabled: true
     chance: 10
-    display-name: "<yellow>⚡ Грозовая аномалия"
-    title: "<yellow><bold>⚡ ГРОЗОВАЯ АНОМАЛИЯ</bold>"
-    subtitle: "<gray>Возьмите в левую руку <gold>громоотводный оберег<gray>!"
+    display-name: "<yellow>⚡ Thunderstorm"
+    title: "<yellow><bold>⚡ THUNDERSTORM</bold>"
+    subtitle: "<gray>Hold the <gold>lightning charm<gray> in your off hand!"
     bossbar-color: YELLOW
     fake-weather: DOWNFALL
     vanilla-thunder: true
@@ -336,22 +336,22 @@ weathers:
       interval-seconds: 12
     lightning:
       enabled: true
-      # true — настоящая молния (может поджечь), false — только визуальный эффект.
+      # true — real lightning (can start fires), false — visual only.
       real-lightning: true
       interval-seconds: 10
-      # Шанс (%) ударить в случайного игрока без защиты при каждом интервале.
+      # Chance (%) to strike an unprotected player on each interval.
       chance-percent: 45
       damage: 4.0
       fire-ticks: 40
 
-  # ── 7. ЭНДЕР-ШТОРМ ────────────────────────────────────────────────────
-  #    Рандомно телепортирует игроков. Защита — эндер-оберег (левая рука).
+  # ── 7. VOID STORM ─────────────────────────────────────────────────────
+  #    Randomly teleports players. Protection: ender charm (off hand).
   VOID_STORM:
     enabled: true
     chance: 6
-    display-name: "<dark_purple>✵ Эндер-шторм"
-    title: "<dark_purple><bold>✵ ЭНДЕР-ШТОРМ</bold>"
-    subtitle: "<gray>Возьмите в левую руку <light_purple>эндер-оберег<gray>!"
+    display-name: "<dark_purple>✵ Void Storm"
+    title: "<dark_purple><bold>✵ VOID STORM</bold>"
+    subtitle: "<gray>Hold the <light_purple>ender charm<gray> in your off hand!"
     bossbar-color: PURPLE
     fake-weather: CLEAR
     vanilla-thunder: false
@@ -380,174 +380,164 @@ weathers:
       enabled: true
       interval-seconds: 8
       chance-percent: 35
-      # На сколько блоков (в радиусе) может телепортировать.
+      # Radius (blocks) the player can be teleported within.
       radius: 20
       damage: 1.0
       sound: "minecraft:entity.enderman.teleport"
 
 # ═════════════════════════════════════════════════════════════════════════
-#  ЗАЩИТА ОТ АНОМАЛИЙ
-#  У каждого предмета есть скрытая метка (PDC), поэтому переименованная
-#  вещь защитой не считается. Рецепты крафта описаны в README.md.
+#  PROTECTION GEAR
+#  Every item carries a hidden PDC key, so a renamed item does not count.
+#  Crafting recipes are described in README.md.
 # ═════════════════════════════════════════════════════════════════════════
 protection:
-  # Показывать в actionbar подсказку, если защиты нет.
+  # Show an actionbar hint when the player has no protection.
   warn-without-protection: true
 
   recipes:
-    # true — добавить рецепты крафта предметов защиты.
+    # true — register crafting recipes for protection gear.
     enabled: true
-    # true — рецепты защиты сразу открыты в книге рецептов у всех игроков.
+    # true — unlock the recipes in every player's recipe book on join.
     unlock-on-join: true
 
   items:
     ACID_RAIN:
       material: LEATHER_HELMET
-      # Слот: HEAD, CHEST, LEGS, FEET, OFF_HAND, MAIN_HAND или ANY.
+      # Slot: HEAD, CHEST, LEGS, FEET, OFF_HAND, MAIN_HAND or ANY.
       slot: HEAD
-      name: "<green>Кислотостойкий шлем"
+      name: "<green>Acid-Proof Helmet"
       lore:
-        - "<gray>Полностью защищает от <dark_green>кислотного дождя"
-        - "<dark_gray>Аномальная погода"
+        - "<gray>Full immunity to <dark_green>acid rain"
+        - "<dark_gray>Anomalous Weather"
       glow: true
       unbreakable: true
       custom-model-data: 0
-      # Доля поглощаемого урона: 1.0 — полная защита, 0.5 — половина.
+      # Damage absorbed: 1.0 — full protection, 0.5 — half.
       damage-reduction: 1.0
-      # Блокировать ли негативные эффекты (яд, слепота и т.д.).
+      # Block negative effects (poison, blindness, etc.).
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
+      # true — cannot be dropped (Q), placed in an item frame,
+      # inserted into an end portal frame, or lost on death.
       prevent-drop: false
 
     FIRE_RAIN:
       material: LEATHER_CHESTPLATE
       slot: CHEST
-      name: "<gold>Огнеупорная мантия"
+      name: "<gold>Fireproof Cloak"
       lore:
-        - "<gray>Полностью защищает от <red>огненного дождя"
-        - "<dark_gray>Аномальная погода"
+        - "<gray>Full immunity to <red>fire rain"
+        - "<dark_gray>Anomalous Weather"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
       prevent-drop: false
 
     BLIZZARD:
       material: LEATHER_BOOTS
       slot: FEET
-      name: "<aqua>Утеплённые сапоги"
+      name: "<aqua>Insulated Boots"
       lore:
-        - "<gray>Полностью защищают от <aqua>снежной бури"
-        - "<dark_gray>Аномальная погода"
+        - "<gray>Full immunity to the <aqua>blizzard"
+        - "<dark_gray>Anomalous Weather"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
       prevent-drop: false
 
     SANDSTORM:
       material: LEATHER_LEGGINGS
       slot: LEGS
-      name: "<gold>Пылезащитные штаны"
+      name: "<gold>Dust Guard"
       lore:
-        - "<gray>Полностью защищают от <gold>песчаной бури"
-        - "<dark_gray>Аномальная погода"
+        - "<gray>Full immunity to the <gold>sandstorm"
+        - "<dark_gray>Anomalous Weather"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
       prevent-drop: false
 
     TOXIC_FOG:
       material: IRON_HELMET
       slot: HEAD
-      name: "<dark_purple>Свинцовая маска"
+      name: "<dark_purple>Lead Mask"
       lore:
-        - "<gray>Полностью защищает от <dark_purple>токсичного тумана"
-        - "<dark_gray>Аномальная погода"
+        - "<gray>Full immunity to the <dark_purple>toxic fog"
+        - "<dark_gray>Anomalous Weather"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
       prevent-drop: false
 
     THUNDERSTORM:
       material: LIGHTNING_ROD
       slot: OFF_HAND
-      name: "<yellow>Громоотводный оберег"
+      name: "<yellow>Lightning Charm"
       lore:
-        - "<gray>Притягивает молнии и защищает владельца"
-        - "<dark_gray>Держите в левой руке"
+        - "<gray>Draws lightning away from its holder"
+        - "<dark_gray>Hold it in your off hand"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку
-      # или вставить в рамку портала Края.
       prevent-drop: false
 
     VOID_STORM:
       material: ENDER_EYE
       slot: OFF_HAND
-      name: "<light_purple>Эндер-оберег"
+      name: "<light_purple>Ender Charm"
       lore:
-        - "<gray>Не даёт эндер-шторму телепортировать вас"
-        - "<dark_gray>Держите в левой руке"
+        - "<gray>Void storm cannot teleport you"
+        - "<dark_gray>Hold it in your off hand"
       glow: true
       unbreakable: true
       custom-model-data: 0
       damage-reduction: 1.0
       blocks-effects: true
-      # true — предмет нельзя выбросить (Q), повесить в рамку,
-      # вставить в рамку портала Края и потерять при смерти.
+      # true — cannot be dropped, framed, inserted into an end portal
+      # frame, or lost on death.
       prevent-drop: true
 
 # ═════════════════════════════════════════════════════════════════════════
-#  СООБЩЕНИЯ
-#  Плейсхолдеры: {prefix}, {weather}, {time}, {chance}, {protection},
+#  MESSAGES
+#  Placeholders: {prefix}, {weather}, {time}, {chance}, {protection},
 #                {player}, {type}, {state}, {count}, {slot}
 # ═════════════════════════════════════════════════════════════════════════
 messages:
-  prefix: "<gradient:#00C9FF:#92FE9D>[Погода]</gradient> "
+  prefix: "<gradient:#00C9FF:#92FE9D>[Weather]</gradient> "
 
-  anomaly-start: "{prefix}<yellow>Над Землёй сгущается аномалия: {weather}<yellow>! Продлится <white>{time}<yellow>."
-  anomaly-end: "{prefix}<yellow>Аномалия {weather} <yellow>рассеялась."
-  anomaly-status: "{prefix}<gray>Сейчас: {weather} <dark_gray>(осталось {time})"
-  anomaly-warning: "{prefix}<yellow>⚠ {weather} <yellow>— через <white>{time}<yellow>. Подготовьте защиту!"
-  anomaly-forecast: "{prefix}<gray>Ожидается: {weather} <dark_gray>— через {time}"
-  no-anomaly: "{prefix}<gray>Сейчас аномалий нет. Следующая проверка через <white>{time}<gray>."
-  actionbar-warning: "<red>⚠ {weather} <red>— нужна защита: {protection}"
-  item-cannot-drop: "<red>⚠ Этот предмет нельзя выбросить!"
-  item-kept-on-death: "<gray>Предмет защиты остался с вами после смерти."
+  anomaly-start: "{prefix}<yellow>An anomaly is forming: {weather}<yellow>! Lasts <white>{time}<yellow>."
+  anomaly-end: "{prefix}<yellow>The {weather} <yellow>has faded."
+  anomaly-status: "{prefix}<gray>Now: {weather} <dark_gray>({time} left)"
+  anomaly-warning: "{prefix}<yellow>⚠ {weather} <yellow>in <white>{time}<yellow>. Get your gear ready!"
+  anomaly-forecast: "{prefix}<gray>Expected: {weather} <dark_gray>— in {time}"
+  no-anomaly: "{prefix}<gray>No anomaly right now. Next roll in <white>{time}<gray>."
+  actionbar-warning: "<red>⚠ {weather} <red>— protection needed: {protection}"
+  item-cannot-drop: "<red>⚠ This item cannot be dropped!"
+  item-kept-on-death: "<gray>Your protection item survived the death."
 
-  started-by-command: "{prefix}<green>Запущена аномалия {weather} <green>на {time}."
-  stopped-by-command: "{prefix}<green>Аномалия остановлена."
-  reloaded: "{prefix}<green>Конфиг перезагружен. Аномалий загружено: <white>{count}<green>."
-  given: "{prefix}<green>Выдано: {protection} <gray>→ <white>{player}<green>."
-  received: "{prefix}<green>Вы получили: {protection}<green>."
-  player-not-found: "{prefix}<red>Игрок <white>{player} <red>не найден."
-  unknown-weather: "{prefix}<red>Неизвестная аномалия: <white>{type}"
-  no-permission: "{prefix}<red>Недостаточно прав."
+  started-by-command: "{prefix}<green>Started {weather} <green>for {time}."
+  stopped-by-command: "{prefix}<green>Anomaly stopped."
+  reloaded: "{prefix}<green>Config reloaded. Anomalies loaded: <white>{count}<green>."
+  given: "{prefix}<green>Granted: {protection} <gray>→ <white>{player}<green>."
+  received: "{prefix}<green>You received: {protection}<green>."
+  player-not-found: "{prefix}<red>Player <white>{player} <red>not found."
+  unknown-weather: "{prefix}<red>Unknown anomaly: <white>{type}"
+  no-permission: "{prefix}<red>No permission."
 
-  command-usage: "{prefix}<yellow>Команды: <white>/anomaly status<yellow>, <white>list<yellow>, <white>start <тип> [сек]<yellow>, <white>stop<yellow>, <white>give <игрок> <тип><yellow>, <white>protection<yellow>, <white>reload"
-  list-header: "{prefix}<white>Аномалии (шанс / статус / защита):"
-  list-entry: "<gray> • {weather} <dark_gray>— <white>{chance}% <gray>({state}<gray>) защита: <white>{protection}"
-  protection-header: "{prefix}<white>Предметы защиты:"
-  protection-entry: "<gray> • {weather} <dark_gray>— <white>{protection} <gray>(слот: {slot})"
+  command-usage: "{prefix}<yellow>Commands: <white>/anomaly status<yellow>, <white>list<yellow>, <white>start <type> [sec]<yellow>, <white>stop<yellow>, <white>give <player> <type><yellow>, <white>protection<yellow>, <white>reload"
+  list-header: "{prefix}<white>Anomalies (chance / state / protection):"
+  list-entry: "<gray> • {weather} <dark_gray>— <white>{chance}% <gray>({state}<gray>) protection: <white>{protection}"
+  protection-header: "{prefix}<white>Protection items:"
+  protection-entry: "<gray> • {weather} <dark_gray>— <white>{protection} <gray>(slot: {slot})"
 
 # Event notifications for the Discord bot (see bot/ in the GaleHeart repo).
 discord:

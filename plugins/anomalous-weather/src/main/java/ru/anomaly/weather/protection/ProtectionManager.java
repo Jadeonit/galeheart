@@ -51,7 +51,7 @@ public final class ProtectionManager {
             }
             ProtectionItem item = ProtectionItem.from(type, section);
             if (item == null) {
-                plugin.getLogger().warning("Некорректный предмет защиты для аномалии " + type.name());
+                plugin.getLogger().warning("Invalid protection item for anomaly " + type.name());
                 continue;
             }
             items.put(type, item);
@@ -76,7 +76,7 @@ public final class ProtectionManager {
     /** Название предмета защиты для сообщений. */
     public String itemName(AnomalyType type) {
         ProtectionItem item = items.get(type);
-        return item == null ? "<gray>не настроена" : item.name();
+        return item == null ? "<gray>not configured" : item.name();
     }
 
     /** Создаёт предмет защиты (для команды /anomaly give). */
@@ -218,7 +218,7 @@ public final class ProtectionManager {
                 Bukkit.addRecipe(recipe);
                 registeredRecipes.add(key);
             } catch (Throwable throwable) {
-                plugin.getLogger().warning("Не удалось зарегистрировать рецепт " + key + ": " + throwable.getMessage());
+                plugin.getLogger().warning("Could not register recipe " + key + ": " + throwable.getMessage());
             }
         }
     }

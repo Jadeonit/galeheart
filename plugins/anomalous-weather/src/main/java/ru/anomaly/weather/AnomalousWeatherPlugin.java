@@ -39,10 +39,10 @@ public final class AnomalousWeatherPlugin extends JavaPlugin {
             command.setExecutor(executor);
             command.setTabCompleter(executor);
         } else {
-            getLogger().warning("Команда /anomaly не найдена в plugin.yml!");
+            getLogger().warning("Command /anomaly is missing from plugin.yml!");
         }
 
-        getLogger().info("AnomalousWeather включён. Загружено аномалий: " + anomalyManager.settings().size());
+        getLogger().info("AnomalousWeather enabled. Anomalies loaded: " + anomalyManager.settings().size());
     }
 
     @Override

@@ -12,11 +12,11 @@ public final class TimeUtil {
         int minutes = (seconds % 3600) / 60;
         int rest = seconds % 60;
         if (hours > 0) {
-            return hours + " ч " + (minutes < 10 ? "0" : "") + minutes + " мин";
+            return hours + "h " + (minutes < 10 ? "0" : "") + minutes + "m";
         }
         if (minutes > 0) {
-            return minutes + " мин " + (rest < 10 ? "0" : "") + rest + " сек";
+            return minutes + "m " + (rest < 10 ? "0" : "") + rest + "s";
         }
-        return rest + " сек";
+        return rest + "s";
     }
 }

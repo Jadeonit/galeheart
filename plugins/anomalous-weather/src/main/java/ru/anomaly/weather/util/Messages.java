@@ -17,7 +17,7 @@ public final class Messages {
     }
 
     public Component get(String key, String... placeholders) {
-        String raw = plugin.getConfig().getString("messages." + key, "<red>[нет сообщения: " + key + "]");
+        String raw = plugin.getConfig().getString("messages." + key, "<red>[missing message: " + key + "]");
         String prefix = plugin.getConfig().getString("messages.prefix", "");
         raw = raw.replace("{prefix}", prefix);
         for (int i = 0; i + 1 < placeholders.length; i += 2) {

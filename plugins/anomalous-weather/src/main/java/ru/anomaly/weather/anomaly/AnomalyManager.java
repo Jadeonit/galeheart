@@ -263,8 +263,8 @@ public final class AnomalyManager {
         if (warnBossbar) {
             createPendingBossBar();
         }
-        plugin.getLogger().info("Запланирована аномалия " + weatherSettings.type.name()
-                + " через " + TimeUtil.format(warnLeadSeconds));
+        plugin.getLogger().info("Scheduled " + weatherSettings.type.name()
+                + " in " + TimeUtil.format(warnLeadSeconds));
         notifier.send("Weather forecast",
                 "In " + Math.max(1, warnLeadSeconds / 60) + " min: " + weatherSettings.displayName,
                 0x3498DB);
@@ -290,12 +290,12 @@ public final class AnomalyManager {
         firedWarnings.clear();
 
         if (minPlayers > 0 && Bukkit.getOnlinePlayers().size() < minPlayers) {
-            plugin.getLogger().info("Аномалия " + weatherSettings.type.name() + " отменена: на сервере нет игроков.");
+            plugin.getLogger().info("Anomaly " + weatherSettings.type.name() + " cancelled: no players online.");
             nextCheckAt = System.currentTimeMillis() + checkInterval * 1000L;
             return;
         }
         if (requireVanillaRain && !overrideVanillaWeather && !isVanillaRainActive()) {
-            plugin.getLogger().info("Аномалия " + weatherSettings.type.name() + " отменена: нет ванильного дождя.");
+            plugin.getLogger().info("Anomaly " + weatherSettings.type.name() + " cancelled: no vanilla rain.");
             nextCheckAt = System.currentTimeMillis() + checkInterval * 1000L;
             return;
         }
@@ -371,7 +371,7 @@ public final class AnomalyManager {
             return Component.empty();
         }
         return Msg.parse(pending.settings().displayName)
-                .append(Msg.parse(" <dark_gray>| <gray>через <white>" + TimeUtil.format(remaining)));
+                .append(Msg.parse(" <dark_gray>| <gray>in <white>" + TimeUtil.format(remaining)));
     }
 
     /** Отменяет запланированную аномалию и убирает её отсчёт. */
@@ -380,7 +380,7 @@ public final class AnomalyManager {
             return;
         }
         if (pending != null) {
-            plugin.getLogger().info("Запланированная аномалия " + pending.type().name() + " отменена.");
+            plugin.getLogger().info("Scheduled anomaly " + pending.type().name() + " cancelled.");
         }
         pending = null;
         firedWarnings.clear();
@@ -439,7 +439,7 @@ public final class AnomalyManager {
             showStartTitle(weatherSettings);
         }
 
-        plugin.getLogger().info("Аномалия " + type.name() + " началась (длительность " + duration + " сек.)");
+        plugin.getLogger().info("Anomaly " + type.name() + " started (" + duration + "s)");
         notifier.send("Anomaly started", weatherSettings.displayName, 0x9B59B6);
         return true;
     }
@@ -460,7 +460,7 @@ public final class AnomalyManager {
             if (announce && announceEnd) {
                 broadcast(messages.get("anomaly-end", "weather", finished.settings().displayName));
             }
-            plugin.getLogger().info("Аномалия " + finished.type().name() + " закончилась.");
+            plugin.getLogger().info("Anomaly " + finished.type().name() + " ended.");
             notifier.send("Anomaly ended", finished.settings().displayName, 0x95A5A6);
         }
 

@@ -48,7 +48,7 @@ public final class GaleHeartCore extends JavaPlugin {
         }
 
         Bukkit.getScheduler().runTaskTimer(this, hearts::coolingTick, 20L * 300, 20L * 600);
-        Bukkit.getScheduler().runTaskTimer(this, quests::tickAll, 20L * 60, 20L * 5);
+        Bukkit.getScheduler().runTaskTimer(this, quests::tickAll, 20L * 5, 20L * 5);
         Bukkit.getScheduler().runTaskTimer(this, store::saveAll, 20L * 300, 20L * 300);
 
         getLogger().info("GaleHeartCore enabled: " + quests.quests().size() + " quests, max "
