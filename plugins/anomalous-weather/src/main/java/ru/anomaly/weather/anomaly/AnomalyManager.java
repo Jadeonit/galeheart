@@ -24,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitTask;
 import ru.anomaly.weather.AnomalousWeatherPlugin;
+import ru.anomaly.weather.notify.DiscordNotifier;
 import ru.anomaly.weather.protection.ProtectionManager;
 import ru.anomaly.weather.util.Messages;
 import ru.anomaly.weather.util.Msg;
@@ -54,6 +55,7 @@ public final class AnomalyManager {
     private final AnomalousWeatherPlugin plugin;
     private final ProtectionManager protection;
     private final Messages messages;
+    private final DiscordNotifier notifier;
     private final Random random = new Random();
 
     private final Map<AnomalyType, WeatherSettings> settings = new EnumMap<>(AnomalyType.class);
@@ -103,6 +105,7 @@ public final class AnomalyManager {
         this.plugin = plugin;
         this.protection = plugin.protectionManager();
         this.messages = plugin.messages();
+        this.notifier = new DiscordNotifier(plugin);
     }
 
     // ------------------------------------------------------------------
@@ -262,6 +265,9 @@ public final class AnomalyManager {
         }
         plugin.getLogger().info("Запланирована аномалия " + weatherSettings.type.name()
                 + " через " + TimeUtil.format(warnLeadSeconds));
+        notifier.send("Weather forecast",
+                "In " + Math.max(1, warnLeadSeconds / 60) + " min: " + weatherSettings.displayName,
+                0x3498DB);
         warnIfDue(pending.remainingSeconds());
     }
 
@@ -434,6 +440,7 @@ public final class AnomalyManager {
         }
 
         plugin.getLogger().info("Аномалия " + type.name() + " началась (длительность " + duration + " сек.)");
+        notifier.send("Anomaly started", weatherSettings.displayName, 0x9B59B6);
         return true;
     }
 
@@ -454,6 +461,7 @@ public final class AnomalyManager {
                 broadcast(messages.get("anomaly-end", "weather", finished.settings().displayName));
             }
             plugin.getLogger().info("Аномалия " + finished.type().name() + " закончилась.");
+            notifier.send("Anomaly ended", finished.settings().displayName, 0x95A5A6);
         }
 
         hideBossBar();

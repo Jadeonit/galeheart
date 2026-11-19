@@ -55,6 +55,8 @@ public final class SeasonManager {
         long duration = plugin.getConfig().getLong("season.one-heart-seconds", 1800L);
         restoreTask = Bukkit.getScheduler().runTaskLater(plugin, this::stopFinale, duration * 20L);
         Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gray>One heart for <white>" + (duration / 60) + " min<gray>. Good luck."));
+        plugin.notifier().send("Season finale", "Everyone is down to one heart for " + (duration / 60)
+                + " minutes. Border is closing to " + (int) size + " blocks.", 0xE74C3C);
     }
 
     public void stopFinale() {
@@ -75,6 +77,7 @@ public final class SeasonManager {
             world.getWorldBorder().changeSize(defaultSize, 1200L);
         }
         originalBorders.clear();
+        plugin.notifier().send("Finale over", "Hearts are restored. Season continues.", 0x2ECC71);
     }
 
     public void resetSeason() {
@@ -87,5 +90,6 @@ public final class SeasonManager {
                     + plugin.getConfig().getInt("hearts.start", 3) + "."));
         }
         Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gradient:#4FA9C9:#C8324B><bold>SEASON RESET<gradient>"));
+        plugin.notifier().send("Season reset", "Hearts and quests wiped. A new season begins.", 0x3498DB);
     }
 }

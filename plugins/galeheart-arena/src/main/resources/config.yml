@@ -1,0 +1,37 @@
+# GaleHeartArena
+
+prefix: "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> "
+
+# World used for duels. Created as a void world if it does not exist.
+world: arena
+
+# Spawn points: x,y,z,yaw
+spawns:
+  a: "-8.5,64,0.5,90"
+  b: "8.5,64,0.5,-90"
+
+# Seconds to accept a challenge.
+request-seconds: 30
+# Seconds without damage before both players are removed from the arena.
+afk-seconds: 180
+# Seconds to reconnect after a disconnect before the duel is lost.
+disconnect-seconds: 30
+# Blocks starting a duel while you are in combat.
+combat-tag-seconds: 15
+# Blocks stake duels between two accounts on the same IP.
+block-same-ip: true
+
+# Kit for /safepvp. Stake duels use your own inventory.
+kits:
+  safe:
+    armor:
+      - "IRON_HELMET"
+      - "IRON_CHESTPLATE"
+      - "IRON_LEGGINGS"
+      - "IRON_BOOTS"
+    items:
+      - "IRON_SWORD:1"
+      - "BOW:1"
+      - "ARROW:16"
+      - "GOLDEN_APPLE:3"
+      - "COOKED_BEEF:8"

@@ -1,0 +1,28 @@
+name: GaleHeartArena
+version: '${project.version}'
+main: ru.galeheart.arena.ArenaPlugin
+api-version: '1.21'
+authors: [ GaleHeart ]
+description: Consensual duels for GaleHeart SMP.
+
+commands:
+  pvp:
+    description: Challenge a player to a stake duel
+    usage: /pvp <player>
+    aliases: [ duel ]
+  safepvp:
+    description: Challenge a player to a practice duel
+    usage: /safepvp <player>
+    aliases: [ spvp ]
+  arena:
+    description: Arena admin
+    usage: /arena reload
+    permission: galeheart.arena.admin
+
+permissions:
+  galeheart.arena.use:
+    description: Can use duels
+    default: true
+  galeheart.arena.admin:
+    description: Arena admin
+    default: op

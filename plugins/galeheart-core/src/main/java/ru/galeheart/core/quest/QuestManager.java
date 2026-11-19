@@ -171,6 +171,8 @@ public final class QuestManager {
                     + quest.display() + "<gradient>"));
             Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gray>" + player.getName() + " completed <white>"
                     + quest.display() + "<gray>."));
+            plugin.notifier().send("Quest complete", player.getName() + " finished " + quest.id()
+                    + ". The gate is open for them.", 0xF1C40F);
         }
     }
 

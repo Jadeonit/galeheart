@@ -1,0 +1,7 @@
+{
+  "token": "PASTE_BOT_TOKEN",
+  "channel_id": "PASTE_CHANNEL_ID",
+  "host": "127.0.0.1",
+  "port": 8099,
+  "secret": ""
+}

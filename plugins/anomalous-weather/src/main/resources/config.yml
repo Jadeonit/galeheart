@@ -548,3 +548,9 @@ messages:
   list-entry: "<gray> • {weather} <dark_gray>— <white>{chance}% <gray>({state}<gray>) защита: <white>{protection}"
   protection-header: "{prefix}<white>Предметы защиты:"
   protection-entry: "<gray> • {weather} <dark_gray>— <white>{protection} <gray>(слот: {slot})"
+
+# Event notifications for the Discord bot (see bot/ in the GaleHeart repo).
+discord:
+  enabled: false
+  endpoint: "http://127.0.0.1:8099/event"
+  secret: ""

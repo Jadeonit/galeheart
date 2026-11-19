@@ -54,3 +54,9 @@ quests:
     steps:
       - "KILL_MOB:BLAZE:30"
       - "COLLECT_ITEM:ENDER_PEARL:16"
+
+# Event notifications for the Discord bot (see /bot in the repo).
+discord:
+  enabled: false
+  endpoint: "http://127.0.0.1:8099/event"
+  secret: ""

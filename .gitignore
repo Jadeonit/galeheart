@@ -1,6 +1,7 @@
 # build output
 target/
 build/
+build-check/
 build-manual/
 *.jar
 

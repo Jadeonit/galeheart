@@ -7,6 +7,7 @@ import ru.galeheart.core.combat.CombatManager;
 import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
+import ru.galeheart.core.notify.DiscordNotifier;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.season.SeasonManager;
 
@@ -18,6 +19,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private CombatManager combat;
     private SeasonManager season;
     private QuestManager quests;
+    private DiscordNotifier notifier;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -31,6 +33,7 @@ public final class GaleHeartCore extends JavaPlugin {
 
         hearts = new HeartManager(this);
         combat = new CombatManager(this);
+        notifier = new DiscordNotifier(this);
         season = new SeasonManager(this);
         quests = new QuestManager(this);
 
@@ -77,6 +80,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public QuestManager quests() {
         return quests;
+    }
+
+    public DiscordNotifier notifier() {
+        return notifier;
     }
 
     public String prefix() {
