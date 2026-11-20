@@ -46,6 +46,7 @@ public final class BountyManager {
     private final Random random = new Random();
     private final Set<DayOfWeek> chosenDays = new HashSet<>();
     private int chosenWeek = -1;
+    private LocalDate warnedDay;
 
     public BountyManager(GaleHeartCore plugin) {
         this.plugin = plugin;
@@ -75,7 +76,30 @@ public final class BountyManager {
         }
         if (shouldStartNow()) {
             start();
+            return;
         }
+        if (shouldWarnNow()) {
+            Bukkit.broadcast(Msg.parse(plugin.prefix() + "<red><bold>BOUNTY<red> in 10 minutes. <gray>Get your compass ready."));
+            plugin.notifier().send("Bounty soon", "The bounty starts in 10 minutes.", 0xE67E22);
+        }
+    }
+
+    /** True exactly once, ten minutes before the scheduled start on a bounty day. */
+    private boolean shouldWarnNow() {
+        LocalDate today = LocalDate.now();
+        if (warnedDay != null && warnedDay.equals(today)) {
+            return false;
+        }
+        LocalTime time = parseTime(plugin.getConfig().getString("bounty.time", "19:00"));
+        LocalTime now = LocalTime.now();
+        if (now.isBefore(time.minusMinutes(10)) || now.isAfter(time)) {
+            return false;
+        }
+        if (!isBountyDay(today)) {
+            return false;
+        }
+        warnedDay = today;
+        return true;
     }
 
     private boolean shouldStartNow() {
@@ -94,6 +118,15 @@ public final class BountyManager {
             return false;
         }
         DayOfWeek day = today.getDayOfWeek();
+        if (!isBountyDay(today)) {
+            return false;
+        }
+        return true;
+    }
+
+    /** Random 3 days per week (ISO week), or the configured list. */
+    private boolean isBountyDay(LocalDate today) {
+        DayOfWeek day = today.getDayOfWeek();
         if (plugin.getConfig().getBoolean("bounty.random-days", true)) {
             int week = today.get(WeekFields.ISO.weekOfWeekBasedYear());
             if (week != chosenWeek) {
@@ -108,7 +141,6 @@ public final class BountyManager {
             }
             return chosenDays.contains(day);
         }
-
         List<String> days = plugin.getConfig().getStringList("bounty.days");
         if (days.isEmpty()) {
             return true;

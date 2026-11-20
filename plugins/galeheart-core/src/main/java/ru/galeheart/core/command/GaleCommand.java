@@ -32,6 +32,7 @@ public final class GaleCommand implements CommandExecutor {
             case "season" -> season(sender, args);
             case "quest" -> quest(sender);
             case "pass" -> pass(sender, args);
+            case "grant" -> grant(sender, args);
             default -> false;
         };
     }
@@ -147,6 +148,23 @@ public final class GaleCommand implements CommandExecutor {
             }
             default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season finale|stop|reset|announce <text>|info"));
         }
+        return true;
+    }
+
+    private boolean grant(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("galeheart.admin")) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
+            return true;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/grant <player> <rank>"));
+            return true;
+        }
+        String playerName = args[0];
+        String rank = args[1].toLowerCase();
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + playerName + " parent add " + rank);
+        sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Granted <white>" + rank + " <green>to <white>" + playerName));
+        plugin.notifier().send("Donation", playerName + " received the " + rank + " rank.", 0xF1C40F);
         return true;
     }
 
