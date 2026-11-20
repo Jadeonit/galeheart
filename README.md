@@ -12,7 +12,9 @@ their configs, the season design docs and the brand assets.
 galeheart/
 ├── docs/                  design and build docs
 │   ├── plugins.md         full plugin list (what to install and why)
+│   ├── season-1.md        eight-week plan: calendar, finale, reset
 │   ├── discord.md         channels, roles, bot setup
+│   ├── luckperms.md       groups and permissions
 │   └── testing.md         release test report
 ├── plugins/
 │   ├── galeheart-core/    hearts, cooldowns, cooling, seasons, quests
