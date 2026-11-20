@@ -32,6 +32,14 @@ public final class DataStore {
             data = YamlConfiguration.loadConfiguration(file);
         }
         cache.clear();
+        for (String key : data.getKeys(false)) {
+            try {
+                UUID id = UUID.fromString(key);
+                cache.put(id, read(id));
+            } catch (IllegalArgumentException ignored) {
+                plugin.getLogger().warning("Skipping malformed player id in data.yml: " + key);
+            }
+        }
     }
 
     public PlayerData get(UUID id) {
