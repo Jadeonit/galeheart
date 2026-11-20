@@ -3,7 +3,9 @@ target/
 build/
 build-check/
 build-manual/
+deploy/out/
 *.jar
+*.zip
 
 # ide
 .idea/
