@@ -539,8 +539,15 @@ messages:
   protection-header: "{prefix}<white>Protection items:"
   protection-entry: "<gray> • {weather} <dark_gray>— <white>{protection} <gray>(slot: {slot})"
 
-# Event notifications for the Discord bot (see bot/ in the GaleHeart repo).
+# Event notifications.
+# Easiest: paste a Discord webhook URL below, no bot needed.
+# If webhook is empty, events are POSTed to discord.endpoint (the Python bot).
 discord:
   enabled: false
+  webhook: ""
+  # Display name and avatar for webhook messages.
+  # avatar must be a public image URL; leave empty to use the webhook's own avatar.
+  name: "GaleHeart Weather"
+  avatar: ""
   endpoint: "http://127.0.0.1:8099/event"
   secret: ""

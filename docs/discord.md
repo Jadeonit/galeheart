@@ -54,15 +54,29 @@ Discord applies permissions by position, so keep the order.
 3. `#announcements` — pin the season start date and the store link.
 4. Nickname rule: Minecraft name, so people can be found in game.
 
-## 5. Run the bot
+## 5. Webhook (no hosting, recommended)
 
-```powershell
-cd bot
-.\setup.ps1
+1. Channel → **Edit Channel → Integrations → Webhooks → New Webhook**.
+2. **Copy Webhook URL**.
+3. In `plugins/GaleHeartCore/config.yml` and `plugins/AnomalousWeather/config.yml`:
+
+```yaml
+discord:
+  enabled: true
+  webhook: "https://discord.com/api/webhooks/..."
+  name: "GaleHeart"          # shown as the author
+  avatar: ""                 # public image URL, or leave empty
 ```
 
-The script asks for the token and the channel ID, validates both against
-Discord and writes `config.json`. Then it starts the bot.
+4. Restart the server and run `/season announce test` in game — the message
+   should appear in the channel within a second.
+
+No bot, no token, no process. The webhook posts as its own identity, not as
+your account.
+
+## 6. Run the bot (optional)
+
+Only needed for commands like `/forecast`. Skip it if the webhook is enough.
 
 ## 6. What the bot posts
 

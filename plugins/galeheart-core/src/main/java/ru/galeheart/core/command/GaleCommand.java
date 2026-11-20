@@ -97,7 +97,16 @@ public final class GaleCommand implements CommandExecutor {
                 plugin.season().resetSeason();
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Season reset."));
             }
-            default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season finale|stop|reset|info"));
+            case "announce" -> {
+                if (args.length < 2) {
+                    sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season announce <text>"));
+                    break;
+                }
+                String text = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+                plugin.notifier().send("Announcement", text, 0x4FA9C9);
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Sent to Discord."));
+            }
+            default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season finale|stop|reset|announce <text>|info"));
         }
         return true;
     }
