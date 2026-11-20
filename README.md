@@ -46,11 +46,15 @@ galeheart/
 3. Hearts above `8` **cool down**: `-1` every 48 hours without a PvP kill.
 4. Completing the **Nether Key** quest grants `galeheart.nether`; PortalBlock
    opens the Nether for that player. Same for the End.
-5. Weather anomalies run on a schedule, announced an hour ahead.
+5. Weather anomalies run on a schedule, announced an hour ahead, **at most
+   twice a day**.
 6. At season end `/season finale` drops everyone to one heart for 30 minutes
    and shrinks the border.
 7. Duels never move hearts: `/safepvp` gives a kit, `/pvp` puts your own
    inventory at stake. Both sides must accept.
+8. Two to three times a week the leader gets a **bounty**: everyone receives
+   a compass that points at them, and the hunter who lands the kill takes a
+   heart.
 
 ## Build
 
