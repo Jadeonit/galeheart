@@ -123,8 +123,14 @@ pass:
 bounty:
   enabled: true
   # Days and local server time. 2-3 per week is the sweet spot.
+  # true - pick N random days each week. false - use the list below.
+  random-days: true
+  days-per-week: 3
+  # Used only when random-days is false.
   days: [ FRIDAY, SATURDAY, SUNDAY ]
   time: "19:00"
+  # Only start within this many minutes after the scheduled time.
+  window-minutes: 90
   duration-minutes: 20
   # Only players above this many hearts can become the target.
   min-hearts: 8

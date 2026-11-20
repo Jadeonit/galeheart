@@ -19,11 +19,13 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,6 +43,9 @@ public final class BountyManager {
     private LocalDate lastRun;
     private BossBar targetBar;
     private final Set<UUID> compassGiven = new HashSet<>();
+    private final Random random = new Random();
+    private final Set<DayOfWeek> chosenDays = new HashSet<>();
+    private int chosenWeek = -1;
 
     public BountyManager(GaleHeartCore plugin) {
         this.plugin = plugin;
@@ -82,7 +87,28 @@ public final class BountyManager {
         if (LocalTime.now().isBefore(time)) {
             return false;
         }
+        int window = Math.max(1, plugin.getConfig().getInt("bounty.window-minutes", 90));
+        if (LocalTime.now().isAfter(time.plusMinutes(window))) {
+            // Too late for today: do not fire at random hours after a restart.
+            lastRun = today;
+            return false;
+        }
         DayOfWeek day = today.getDayOfWeek();
+        if (plugin.getConfig().getBoolean("bounty.random-days", true)) {
+            int week = today.get(WeekFields.ISO.weekOfWeekBasedYear());
+            if (week != chosenWeek) {
+                chosenWeek = week;
+                chosenDays.clear();
+                List<DayOfWeek> pool = new ArrayList<>(List.of(DayOfWeek.values()));
+                int perWeek = Math.max(1, Math.min(7, plugin.getConfig().getInt("bounty.days-per-week", 3)));
+                for (int i = 0; i < perWeek && !pool.isEmpty(); i++) {
+                    chosenDays.add(pool.remove(random.nextInt(pool.size())));
+                }
+                plugin.getLogger().info("Bounty days this week: " + chosenDays);
+            }
+            return chosenDays.contains(day);
+        }
+
         List<String> days = plugin.getConfig().getStringList("bounty.days");
         if (days.isEmpty()) {
             return true;

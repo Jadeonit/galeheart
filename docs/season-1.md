@@ -15,7 +15,7 @@ the payoff.
 | Combat tag | 15 seconds |
 | Heart cooling | above 16 hearts, −1 per 48 hours without a kill |
 | Weather | at most 2 anomalies per day, announced 1 hour ahead |
-| Bounty | Friday, Saturday, Sunday at 19:00 UTC, 20 minutes |
+| Bounty | 3 random days each week, 19:00 UTC, 20 minutes |
 | Nether / End | sealed until the matching quest is finished |
 | Teleports | none. Beds only, world spawn as fallback |
 | Season pass | 30 levels, XP from play and events, cosmetic shards only |
@@ -49,7 +49,7 @@ it without a content deadline on top.
 
 - **Mon–Thu** — quiet. Weather once a day, no events. This is when people
   build and farm.
-- **Fri–Sun** — bounty at 19:00 UTC, weather at the daily cap. This is when
+- **Bounty days** (3 random per week) — 19:00 UTC, weather at the daily cap. This is when
   people fight.
 - **Sunday 21:00** — weekly `/top` post in Discord: top 5 hearts, biggest
   heart loss, most bounties survived.
