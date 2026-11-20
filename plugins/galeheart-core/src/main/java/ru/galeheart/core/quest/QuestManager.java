@@ -166,6 +166,7 @@ public final class QuestManager {
             }
             data.questsDone.add(quest.id());
             plugin.store().write(data);
+            plugin.pass().addXp(player, "quest", 150);
             grant(player);
             player.sendMessage(Msg.parse(plugin.prefix() + "<gradient:#4FA9C9:#C8324B><bold>QUEST COMPLETE: "
                     + quest.display() + "<gradient>"));

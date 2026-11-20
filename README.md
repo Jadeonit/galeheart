@@ -58,6 +58,8 @@ galeheart/
 8. Two to three times a week the leader gets a **bounty**: everyone receives
    a compass that points at them, and the hunter who lands the kill takes a
    heart.
+9. A **season pass** tracks XP from play, kills, quests and events. Levels pay
+   shards, and shards buy cosmetics only — never power.
 
 ## Build
 

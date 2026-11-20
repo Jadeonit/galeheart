@@ -18,6 +18,9 @@ commands:
     description: Season info and admin controls
     usage: /season
     aliases: [ s ]
+  pass:
+    description: Season pass progress
+    usage: /pass
   quest:
     description: Quest progress
     usage: /quest

@@ -18,6 +18,7 @@ the payoff.
 | Bounty | Friday, Saturday, Sunday at 19:00 UTC, 20 minutes |
 | Nether / End | sealed until the matching quest is finished |
 | Teleports | none. Beds only, world spawn as fallback |
+| Season pass | 30 levels, XP from play and events, cosmetic shards only |
 
 ## Why this shape
 

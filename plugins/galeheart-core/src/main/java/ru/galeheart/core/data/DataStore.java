@@ -60,6 +60,23 @@ public final class DataStore {
         player.lastDeath = section.getLong("last-death", 0L);
         player.lastKill = section.getLong("last-kill", 0L);
         player.protectionUntil = section.getLong("protection-until", 0L);
+        player.passXp = section.getInt("pass-xp", 0);
+        player.shards = section.getInt("shards", 0);
+        player.dailyShards = section.getInt("daily-shards", 0);
+        String day = section.getString("pass-day", "");
+        if (!day.isBlank()) {
+            try {
+                player.passDay = java.time.LocalDate.parse(day);
+            } catch (RuntimeException ignored) {
+                // keep today
+            }
+        }
+        ConfigurationSection daily = section.getConfigurationSection("daily-xp");
+        if (daily != null) {
+            for (String key : daily.getKeys(false)) {
+                player.dailyXp.put(key, daily.getInt(key));
+            }
+        }
 
         ConfigurationSection quests = section.getConfigurationSection("quests");
         if (quests != null) {
@@ -89,6 +106,14 @@ public final class DataStore {
         data.set(path + ".last-death", player.lastDeath);
         data.set(path + ".last-kill", player.lastKill);
         data.set(path + ".protection-until", player.protectionUntil);
+        data.set(path + ".pass-xp", player.passXp);
+        data.set(path + ".shards", player.shards);
+        data.set(path + ".daily-shards", player.dailyShards);
+        data.set(path + ".pass-day", player.passDay.toString());
+        data.set(path + ".daily-xp", null);
+        for (Map.Entry<String, Integer> entry : player.dailyXp.entrySet()) {
+            data.set(path + ".daily-xp." + entry.getKey(), entry.getValue());
+        }
         data.set(path + ".progress", null);
         for (Map.Entry<String, Integer> entry : player.questProgress.entrySet()) {
             data.set(path + ".progress." + entry.getKey(), entry.getValue());

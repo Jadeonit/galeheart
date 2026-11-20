@@ -9,6 +9,7 @@ import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
 import ru.galeheart.core.notify.DiscordNotifier;
+import ru.galeheart.core.pass.PassManager;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.season.SeasonManager;
 import ru.galeheart.core.spawn.SpawnManager;
@@ -24,6 +25,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private DiscordNotifier notifier;
     private SpawnManager spawn;
     private BountyManager bounty;
+    private PassManager pass;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -42,11 +44,12 @@ public final class GaleHeartCore extends JavaPlugin {
         quests = new QuestManager(this);
         spawn = new SpawnManager(this);
         bounty = new BountyManager(this);
+        pass = new PassManager(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
 
         GaleCommand executor = new GaleCommand(this);
-        for (String name : new String[]{"hearts", "top", "season", "quest"}) {
+        for (String name : new String[]{"hearts", "top", "season", "quest", "pass"}) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(executor);
@@ -56,6 +59,7 @@ public final class GaleHeartCore extends JavaPlugin {
         Bukkit.getScheduler().runTaskTimer(this, hearts::coolingTick, 20L * 300, 20L * 600);
         Bukkit.getScheduler().runTaskTimer(this, quests::tickAll, 20L * 5, 20L * 5);
         Bukkit.getScheduler().runTaskTimer(this, bounty::tick, 20L * 10, 20L * 10);
+        Bukkit.getScheduler().runTaskTimer(this, pass::tickPlaytime, 20L * 60, 20L * 60);
         Bukkit.getScheduler().runTaskTimer(this, store::saveAll, 20L * 300, 20L * 300);
 
         getLogger().info("GaleHeartCore enabled: " + quests.quests().size() + " quests, max "
@@ -99,6 +103,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public BountyManager bounty() {
         return bounty;
+    }
+
+    public PassManager pass() {
+        return pass;
     }
 
     public String prefix() {

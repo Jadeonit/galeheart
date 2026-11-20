@@ -29,6 +29,7 @@ public final class GaleCommand implements CommandExecutor {
             case "top" -> top(sender);
             case "season" -> season(sender, args);
             case "quest" -> quest(sender);
+            case "pass" -> pass(sender, args);
             default -> false;
         };
     }
@@ -124,8 +125,37 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean quest(CommandSender sender) {
+    private boolean pass(CommandSender sender, String[] args) {
+        if (args.length >= 3 && args[0].equalsIgnoreCase("add")) {
+            if (!sender.hasPermission("galeheart.admin")) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
+                return true;
+            }
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if (target == null) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<red>Player not found."));
+                return true;
+            }
+            plugin.pass().addXp(target, "admin", parse(args[2], 0));
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Pass XP: " + plugin.pass().xp(target)));
+            return true;
+        }
+
         if (!(sender instanceof Player player)) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass add <player> <xp>"));
+            return true;
+        }
+        int level = plugin.pass().level(player);
+        int into = plugin.pass().xpIntoLevel(plugin.pass().xp(player));
+        int need = level >= plugin.pass().maxLevel() ? 0 : plugin.pass().costForLevel(level);
+        sender.sendMessage(Msg.parse("<gradient:#4FA9C9:#C8324B><bold>Season Pass"));
+        sender.sendMessage(Msg.parse("<gray>Level <white>" + level + "<gray>/" + plugin.pass().maxLevel()
+                + (need > 0 ? " <dark_gray>(" + into + "/" + need + " xp)" : " <green>max")));
+        sender.sendMessage(Msg.parse("<gray>Shards: <white>" + plugin.pass().shards(player)));
+        return true;
+    }
+
+    private boolean quest(CommandSender sender) {        if (!(sender instanceof Player player)) {
             return true;
         }
         PlayerData data = plugin.store().get(player.getUniqueId());
@@ -147,8 +177,7 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private static int parse(String raw, int fallback) {
-        try {
+    private static int parse(String raw, int fallback) {        try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException exception) {
             return fallback;

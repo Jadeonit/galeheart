@@ -18,6 +18,14 @@ public final class PlayerData {
     public long lastKill;
     public long protectionUntil;
 
+    // Season pass
+    public int passXp;
+    public int shards;
+    public int dailyShards;
+    public java.time.LocalDate passDay = java.time.LocalDate.now();
+    public final Map<String, Integer> dailyXp = new HashMap<>();
+    public final Map<UUID, Long> killCooldowns = new HashMap<>();
+
     /** "questId:stepIndex" -> progress. */
     public final Map<String, Integer> questProgress = new HashMap<>();
     public final Set<String> questsDone = new HashSet<>();

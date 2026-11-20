@@ -251,6 +251,7 @@ public final class BountyManager {
         if (rewardSurvivor && target != null) {
             int reward = plugin.getConfig().getInt("bounty.survivor-hearts", 1);
             plugin.hearts().add(target, reward);
+            plugin.pass().addXp(target, "bounty", 300);
             Bukkit.broadcast(Msg.parse(plugin.prefix() + "<green>" + target.getName()
                     + " survived the bounty. <red>+" + reward + " heart"));
             plugin.notifier().send("Bounty survived", target.getName() + " survived the hunt.", 0x2ECC71);

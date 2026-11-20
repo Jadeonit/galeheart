@@ -9,6 +9,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -64,6 +65,9 @@ public final class CoreListener implements Listener {
         Player victim = event.getEntity();
         plugin.hearts().onDeath(victim, victim.getKiller());
         plugin.bounty().handleDeath(victim, victim.getKiller());
+        if (victim.getKiller() != null && !victim.getKiller().equals(victim)) {
+            plugin.pass().onKill(victim.getKiller(), victim);
+        }
     }
 
     @EventHandler
@@ -107,5 +111,10 @@ public final class CoreListener implements Listener {
             return;
         }
         plugin.quests().onKill(killer, event.getEntityType());
+    }
+
+    @EventHandler
+    public void onExp(PlayerExpChangeEvent event) {
+        plugin.pass().addVanillaXp(event.getPlayer(), event.getAmount());
     }
 }

@@ -65,6 +65,29 @@ spawn:
   platform: true
   platform-radius: 5
 
+pass:
+  enabled: true
+  levels: 30
+  # XP to go from level N to N+1 = base + step * (N-1)
+  xp-base: 500
+  xp-step: 20
+  # Grind sources are capped per day; event sources are not.
+  daily-caps:
+    vanilla-xp: 300
+    playtime: 300
+    kills: 200
+  shards:
+    per-vanilla-xp: 20
+    daily-cap: 40
+    per-level: 20
+  playtime:
+    xp-per-hour: 60
+  kills:
+    xp: 40
+    victim-cooldown-hours: 1
+  # Commands run on level up, per level. %player% is replaced.
+  rewards: {}
+
 bounty:
   enabled: true
   # Days and local server time. 2-3 per week is the sweet spot.
