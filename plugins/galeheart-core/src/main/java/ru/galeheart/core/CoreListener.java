@@ -35,10 +35,12 @@ public final class CoreListener implements Listener {
         if (data.firstJoin == 0L) {
             data.firstJoin = System.currentTimeMillis();
             plugin.combat().grantNewPlayerProtection(player);
+            plugin.store().save(data);
             player.sendMessage(Msg.parse(plugin.prefix() + "<green>Welcome. You have <white>"
                     + plugin.getConfig().getInt("protection.new-player-hours", 24)
                     + "h<green> of protection — nobody can touch you, and you cannot attack players."));
             Bukkit.getScheduler().runTask(plugin, () -> plugin.spawn().scatter(player));
+            plugin.kit().give(player);
         }
 
         plugin.hearts().apply(player);

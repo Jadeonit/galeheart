@@ -62,6 +62,17 @@ quests:
       - "KILL_MOB:BLAZE:30"
       - "COLLECT_ITEM:ENDER_PEARL:16"
 
+starter-kit:
+  enabled: true
+  items:
+    - "STONE_SWORD:1"
+    - "STONE_PICKAXE:1"
+    - "STONE_AXE:1"
+    - "BREAD:8"
+    - "OAK_LOG:16"
+    - "TORCH:16"
+    - "WHITE_BED:1"
+
 spawn:
   # First join: drop the player into the wild this many blocks from world spawn.
   # 0 — spawn exactly at the world spawn point.

@@ -11,6 +11,7 @@ import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
 import ru.galeheart.core.notify.DiscordNotifier;
+import ru.galeheart.core.onboarding.StarterKit;
 import ru.galeheart.core.pass.PassManager;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.season.SeasonManager;
@@ -29,6 +30,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private BountyManager bounty;
     private PassManager pass;
     private ChatManager chat;
+    private StarterKit kit;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -49,6 +51,7 @@ public final class GaleHeartCore extends JavaPlugin {
         bounty = new BountyManager(this);
         pass = new PassManager(this);
         chat = new ChatManager(this);
+        kit = new StarterKit(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
@@ -116,6 +119,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public ChatManager chat() {
         return chat;
+    }
+
+    public StarterKit kit() {
+        return kit;
     }
 
     public String prefix() {
