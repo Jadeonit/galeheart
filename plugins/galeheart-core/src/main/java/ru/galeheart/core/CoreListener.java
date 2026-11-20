@@ -56,12 +56,14 @@ public final class CoreListener implements Listener {
         plugin.store().save(plugin.store().get(player.getUniqueId()));
         plugin.combat().clear(player);
         plugin.quests().forget(player);
+        plugin.bounty().onQuit(player);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
         plugin.hearts().onDeath(victim, victim.getKiller());
+        plugin.bounty().handleDeath(victim, victim.getKiller());
     }
 
     @EventHandler

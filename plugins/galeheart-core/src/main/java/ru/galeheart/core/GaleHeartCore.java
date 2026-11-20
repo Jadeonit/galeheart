@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.galeheart.core.combat.CombatManager;
+import ru.galeheart.core.bounty.BountyManager;
 import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
@@ -22,6 +23,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private QuestManager quests;
     private DiscordNotifier notifier;
     private SpawnManager spawn;
+    private BountyManager bounty;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -39,6 +41,7 @@ public final class GaleHeartCore extends JavaPlugin {
         season = new SeasonManager(this);
         quests = new QuestManager(this);
         spawn = new SpawnManager(this);
+        bounty = new BountyManager(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
 
@@ -52,6 +55,7 @@ public final class GaleHeartCore extends JavaPlugin {
 
         Bukkit.getScheduler().runTaskTimer(this, hearts::coolingTick, 20L * 300, 20L * 600);
         Bukkit.getScheduler().runTaskTimer(this, quests::tickAll, 20L * 5, 20L * 5);
+        Bukkit.getScheduler().runTaskTimer(this, bounty::tick, 20L * 10, 20L * 10);
         Bukkit.getScheduler().runTaskTimer(this, store::saveAll, 20L * 300, 20L * 300);
 
         getLogger().info("GaleHeartCore enabled: " + quests.quests().size() + " quests, max "
@@ -91,6 +95,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public SpawnManager spawn() {
         return spawn;
+    }
+
+    public BountyManager bounty() {
+        return bounty;
     }
 
     public String prefix() {

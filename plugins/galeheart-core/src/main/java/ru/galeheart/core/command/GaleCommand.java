@@ -106,6 +106,19 @@ public final class GaleCommand implements CommandExecutor {
                 plugin.notifier().send("Announcement", text, 0x4FA9C9);
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Sent to Discord."));
             }
+            case "bounty" -> {
+                String action = args.length > 1 ? args[1].toLowerCase() : "status";
+                switch (action) {
+                    case "start" -> sender.sendMessage(Msg.parse(plugin.prefix()
+                            + (plugin.bounty().start() ? "<green>Bounty started." : "<red>Nobody eligible.")));
+                    case "stop" -> {
+                        plugin.bounty().cancel();
+                        sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Bounty stopped."));
+                    }
+                    default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Bounty: "
+                            + (plugin.bounty().active() ? "<red>" + plugin.bounty().targetName() : "<green>not active")));
+                }
+            }
             default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season finale|stop|reset|announce <text>|info"));
         }
         return true;

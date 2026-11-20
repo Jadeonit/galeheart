@@ -34,15 +34,18 @@ settings:
   visual-fake-weather: true
 
   # How often to roll for an anomaly (seconds).
-  check-interval-seconds: 90
+  check-interval-seconds: 14400
 
   # Chance (%) that a roll starts an anomaly.
-  anomaly-chance-percent: 35
+  anomaly-chance-percent: 45
 
   # Minimum players online for a random anomaly to start.
   # Keeps events from firing into an empty server at night.
   # 1 — one player is enough, 0 — no check.
   min-players: 1
+
+  # Hard cap on random anomalies per day. 0 - no cap.
+  max-per-day: 2
 
   # Cooldown after an anomaly ends before the next roll (seconds).
   cooldown:

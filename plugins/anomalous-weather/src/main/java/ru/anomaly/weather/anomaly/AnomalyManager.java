@@ -31,6 +31,7 @@ import ru.anomaly.weather.util.Msg;
 import ru.anomaly.weather.util.TimeUtil;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,6 +87,9 @@ public final class AnomalyManager {
     private int checkInterval;
     private int anomalyChance;
     private int minPlayers;
+    private int maxPerDay = 2;
+    private LocalDate anomalyDay = LocalDate.now();
+    private int anomaliesToday;
     private int minCooldown;
     private int maxCooldown;
     private int effectRadius;
@@ -133,6 +137,7 @@ public final class AnomalyManager {
         checkInterval = Math.max(5, config.getInt("settings.check-interval-seconds", 90));
         anomalyChance = Math.max(0, Math.min(100, config.getInt("settings.anomaly-chance-percent", 35)));
         minPlayers = Math.max(0, config.getInt("settings.min-players", 1));
+        maxPerDay = Math.max(0, config.getInt("settings.max-per-day", 2));
         minCooldown = Math.max(1, config.getInt("settings.cooldown.min-seconds", 180));
         maxCooldown = Math.max(minCooldown, config.getInt("settings.cooldown.max-seconds", 480));
         int globalMinDuration = Math.max(30, config.getInt("settings.duration.min-seconds", 120));
@@ -253,6 +258,16 @@ public final class AnomalyManager {
      * и анонсы, через lead-seconds она начнётся сама.
      */
     private void scheduleAnomaly(WeatherSettings weatherSettings) {
+        if (maxPerDay > 0) {
+            LocalDate today = LocalDate.now();
+            if (!today.equals(anomalyDay)) {
+                anomalyDay = today;
+                anomaliesToday = 0;
+            }
+            if (anomaliesToday >= maxPerDay) {
+                return;
+            }
+        }
         if (!warnEnabled || warnLeadSeconds <= 0) {
             startAnomaly(weatherSettings.type, 0);
             return;
@@ -299,6 +314,12 @@ public final class AnomalyManager {
             nextCheckAt = System.currentTimeMillis() + checkInterval * 1000L;
             return;
         }
+        LocalDate today = LocalDate.now();
+        if (!today.equals(anomalyDay)) {
+            anomalyDay = today;
+            anomaliesToday = 0;
+        }
+        anomaliesToday++;
         startAnomaly(weatherSettings.type, 0);
     }
 

@@ -65,6 +65,19 @@ spawn:
   platform: true
   platform-radius: 5
 
+bounty:
+  enabled: true
+  # Days and local server time. 2-3 per week is the sweet spot.
+  days: [ FRIDAY, SATURDAY, SUNDAY ]
+  time: "19:00"
+  duration-minutes: 20
+  # Only players above this many hearts can become the target.
+  min-hearts: 8
+  reward-hearts: 1
+  survivor-hearts: 1
+  skip-staff: true
+  arena-world: "arena"
+
 # Event notifications.
 # Easiest: paste a Discord webhook URL below, no bot needed.
 # If webhook is empty, events are POSTed to discord.endpoint (the Python bot).
