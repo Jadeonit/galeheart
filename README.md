@@ -15,6 +15,7 @@ galeheart/
 │   ├── season-1.md        eight-week plan: calendar, finale, reset
 │   ├── discord.md         channels, roles, bot setup
 │   ├── luckperms.md       groups and permissions
+│   ├── install.md         install day checklist
 │   └── testing.md         release test report
 ├── plugins/
 │   ├── galeheart-core/    hearts, cooldowns, cooling, seasons, quests
