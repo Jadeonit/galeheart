@@ -55,6 +55,16 @@ quests:
       - "KILL_MOB:BLAZE:30"
       - "COLLECT_ITEM:ENDER_PEARL:16"
 
+spawn:
+  # First join: drop the player into the wild this many blocks from world spawn.
+  # 0 — spawn exactly at the world spawn point.
+  first-join-radius: 250
+  # Vanilla respawn scatter radius (gamerule spawnRadius).
+  respawn-radius: 30
+  # Build the small starter platform once. It is not protected.
+  platform: true
+  platform-radius: 5
+
 # Event notifications for the Discord bot (see /bot in the repo).
 discord:
   enabled: false

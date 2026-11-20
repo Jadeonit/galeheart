@@ -38,7 +38,9 @@ galeheart/
 ## How the systems connect
 
 1. A new player joins, gets **24 hours of full protection** (cannot deal or take
-   player damage) and a starter kit.
+   player damage), a starter kit, and wakes up in the wild 100–250 blocks from
+   spawn. The spawn is a small unprotected platform — players may break it or
+   build it up.
 2. Death costs a heart. The victim drops a **Heart** item, anyone can pick it up
    and right-click it for `+1` heart, up to the cap.
 3. Hearts above `8` **cool down**: `-1` every 48 hours without a PvP kill.

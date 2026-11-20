@@ -10,6 +10,7 @@ import ru.galeheart.core.hearts.HeartManager;
 import ru.galeheart.core.notify.DiscordNotifier;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.season.SeasonManager;
+import ru.galeheart.core.spawn.SpawnManager;
 
 /** Hearts, cooldowns, cooling, seasons and quests for GaleHeart SMP. */
 public final class GaleHeartCore extends JavaPlugin {
@@ -20,6 +21,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private SeasonManager season;
     private QuestManager quests;
     private DiscordNotifier notifier;
+    private SpawnManager spawn;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -36,6 +38,7 @@ public final class GaleHeartCore extends JavaPlugin {
         notifier = new DiscordNotifier(this);
         season = new SeasonManager(this);
         quests = new QuestManager(this);
+        spawn = new SpawnManager(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
 
@@ -84,6 +87,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public DiscordNotifier notifier() {
         return notifier;
+    }
+
+    public SpawnManager spawn() {
+        return spawn;
     }
 
     public String prefix() {
