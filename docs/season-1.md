@@ -7,13 +7,13 @@ the payoff.
 
 | Rule | Value |
 |---|---|
-| Start | 3 hearts |
-| Cap | 10 hearts |
+| Start | 10 hearts |
+| Cap | 20 hearts |
 | Death cost | 1 heart, dropped as an item |
 | New player protection | 24 hours, full PvP immunity |
 | Death cooldown | 3 minutes without heart loss |
 | Combat tag | 15 seconds |
-| Heart cooling | above 8 hearts, −1 per 48 hours without a kill |
+| Heart cooling | above 16 hearts, −1 per 48 hours without a kill |
 | Weather | at most 2 anomalies per day, announced 1 hour ahead |
 | Bounty | Friday, Saturday, Sunday at 19:00 UTC, 20 minutes |
 | Nether / End | sealed until the matching quest is finished |
@@ -121,7 +121,7 @@ marketing. Fix onboarding before making more clips.
 **Launch**
 
 > Season 1: Acid Sky is live.
-> 3 hearts, no teleports, the weather is hunting you.
+> 10 hearts, no teleports, the weather is hunting you.
 > play.galeheart.com
 
 **Bounty**
@@ -137,7 +137,7 @@ marketing. Fix onboarding before making more clips.
 | Risk | Mitigation |
 |---|---|
 | Player dies far from base, quits | watch chat; if it repeats, add `/spawn` with a 10 min cooldown |
-| Bounty target hunted every night | 24h cooldown per player, min 8 hearts |
+| Bounty target hunted every night | 24h cooldown per player, min 16 hearts |
 | Weather feels like a tax | keep the cap at 2/day, never raise it mid-season |
 | Hearts concentrate too fast | cooling threshold 8, raise to 7 if needed |
 | Nobody uses the arena | arena night in week 5, cosmetic prize |

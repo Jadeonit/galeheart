@@ -4,9 +4,16 @@ prefix: "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> "
 
 hearts:
   # Hearts a new player starts with. 1 heart = 2 HP.
-  start: 3
+  start: 10
   min: 1
-  max: 10
+  max: 20
+  # Dying on the last heart costs time instead of a heart.
+  min-penalty:
+    enabled: true
+    seconds: 600
+    effects:
+      - "WEAKNESS:1"
+      - "SLOWNESS:1"
 
   item:
     material: NETHER_STAR
@@ -26,7 +33,7 @@ protection:
 cooling:
   # Hearts above this value decay without PvP kills.
   enabled: true
-  above: 8
+  above: 16
   hours-without-kill: 48
 
 season:

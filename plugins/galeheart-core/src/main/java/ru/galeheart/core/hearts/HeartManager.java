@@ -5,18 +5,24 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import ru.galeheart.core.GaleHeartCore;
 import ru.galeheart.core.combat.CombatManager;
 import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.util.Msg;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /** Hearts as health + a tradeable item. */
 public final class HeartManager {
 
     private final GaleHeartCore plugin;
     private final HeartItem item;
+    private final Set<UUID> pendingPenalty = new HashSet<>();
 
     public HeartManager(GaleHeartCore plugin) {
         this.plugin = plugin;
@@ -84,6 +90,10 @@ public final class HeartManager {
             data.lastDeath = now;
             dropHeart(victim.getLocation());
             victim.sendMessage(Msg.parse(plugin.prefix() + "<red>You lost a heart. <gray>(" + data.hearts + " left)"));
+        } else if (canLose) {
+            // Already at the floor: no heart to take, so the death costs time instead.
+            pendingPenalty.add(victim.getUniqueId());
+            victim.sendMessage(Msg.parse(plugin.prefix() + "<dark_red>You died on your last heart. <gray>You will respawn weakened."));
         }
 
         if (killer != null && !killer.equals(victim)) {
@@ -142,5 +152,27 @@ public final class HeartManager {
     public List<PlayerData> top(int limit) {
         List<PlayerData> all = plugin.store().top();
         return all.subList(0, Math.min(limit, all.size()));
+    }
+
+    /** Applies the last-heart penalty after respawn, if one is pending. */
+    public void applyPenalty(Player player) {
+        if (!pendingPenalty.remove(player.getUniqueId())) {
+            return;
+        }
+        if (!plugin.getConfig().getBoolean("hearts.min-penalty.enabled", true)) {
+            return;
+        }
+        int seconds = Math.max(10, plugin.getConfig().getInt("hearts.min-penalty.seconds", 600));
+        for (String raw : plugin.getConfig().getStringList("hearts.min-penalty.effects")) {
+            String[] parts = raw.split(":");
+            PotionEffectType type = PotionEffectType.getByName(parts[0].trim().toUpperCase());
+            if (type == null) {
+                continue;
+            }
+            int amplifier = parts.length > 1 ? Math.max(0, Integer.parseInt(parts[1].trim())) : 0;
+            player.addPotionEffect(new PotionEffect(type, seconds * 20, amplifier, true, true, true));
+        }
+        player.sendMessage(Msg.parse(plugin.prefix() + "<dark_red>Weakened for <white>"
+                + (seconds / 60) + " min<dark_red>. Do not die on your last heart."));
     }
 }

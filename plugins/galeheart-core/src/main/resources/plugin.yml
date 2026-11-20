@@ -21,12 +21,6 @@ commands:
   pass:
     description: Season pass progress
     usage: /pass
-  mute:
-    description: Mute a player
-    usage: /mute <player> [minutes]
-  unmute:
-    description: Unmute a player
-    usage: /unmute <player>
   quest:
     description: Quest progress
     usage: /quest

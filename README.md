@@ -46,7 +46,7 @@ galeheart/
    build it up.
 2. Death costs a heart. The victim drops a **Heart** item, anyone can pick it up
    and right-click it for `+1` heart, up to the cap.
-3. Hearts above `8` **cool down**: `-1` every 48 hours without a PvP kill.
+3. Hearts above `16` **cool down**: `-1` every 48 hours without a PvP kill.
 4. Completing the **Nether Key** quest grants `galeheart.nether`; PortalBlock
    opens the Nether for that player. Same for the End.
 5. Weather anomalies run on a schedule, announced an hour ahead, **at most

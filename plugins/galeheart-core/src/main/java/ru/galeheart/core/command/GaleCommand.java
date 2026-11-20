@@ -5,12 +5,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import ru.galeheart.core.GaleHeartCore;
 import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.util.Msg;
 
 import java.util.List;
+import java.util.Map;
 
 /** /hearts, /top, /season, /quest. */
 public final class GaleCommand implements CommandExecutor {
@@ -30,13 +32,33 @@ public final class GaleCommand implements CommandExecutor {
             case "season" -> season(sender, args);
             case "quest" -> quest(sender);
             case "pass" -> pass(sender, args);
-            case "mute" -> mute(sender, args, true);
-            case "unmute" -> mute(sender, args, false);
             default -> false;
         };
     }
 
     private boolean hearts(CommandSender sender, String[] args) {
+        if (args.length >= 1 && args[0].equalsIgnoreCase("withdraw")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/hearts withdraw <amount>"));
+                return true;
+            }
+            int amount = args.length >= 2 ? parse(args[1], 1) : 1;
+            int current = plugin.hearts().hearts(player);
+            if (amount <= 0 || current - amount < plugin.hearts().min()) {
+                player.sendMessage(Msg.parse(plugin.prefix() + "<red>Not enough hearts to withdraw."));
+                return true;
+            }
+            plugin.hearts().set(player, current - amount);
+            for (int i = 0; i < amount; i++) {
+                Map<Integer, ItemStack> leftover = player.getInventory().addItem(plugin.hearts().item().create());
+                for (ItemStack rest : leftover.values()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), rest);
+                }
+            }
+            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>Withdrew <red>" + amount + " <gray>heart(s)."));
+            return true;
+        }
+
         if (args.length >= 2 && args[0].equalsIgnoreCase("add")) {
             if (!sender.hasPermission("galeheart.admin")) {
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
@@ -61,6 +83,7 @@ public final class GaleCommand implements CommandExecutor {
         int hearts = plugin.hearts().hearts(player);
         sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Hearts: <red>" + hearts + "<gray>/"
                 + plugin.hearts().max()));
+        sender.sendMessage(Msg.parse("<dark_gray>/hearts withdraw <amount> — turn hearts into items"));
         return true;
     }
 

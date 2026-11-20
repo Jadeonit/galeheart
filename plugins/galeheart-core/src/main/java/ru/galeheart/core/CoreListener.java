@@ -72,7 +72,10 @@ public final class CoreListener implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        Bukkit.getScheduler().runTask(plugin, () -> plugin.hearts().apply(event.getPlayer()));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.hearts().apply(event.getPlayer());
+            plugin.hearts().applyPenalty(event.getPlayer());
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
