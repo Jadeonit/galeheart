@@ -5,6 +5,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.galeheart.core.combat.CombatManager;
 import ru.galeheart.core.bounty.BountyManager;
+import ru.galeheart.core.chat.ChatListener;
+import ru.galeheart.core.chat.ChatManager;
 import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
@@ -26,6 +28,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private SpawnManager spawn;
     private BountyManager bounty;
     private PassManager pass;
+    private ChatManager chat;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -45,11 +48,13 @@ public final class GaleHeartCore extends JavaPlugin {
         spawn = new SpawnManager(this);
         bounty = new BountyManager(this);
         pass = new PassManager(this);
+        chat = new ChatManager(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 
         GaleCommand executor = new GaleCommand(this);
-        for (String name : new String[]{"hearts", "top", "season", "quest", "pass"}) {
+        for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "mute", "unmute"}) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(executor);
@@ -107,6 +112,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public PassManager pass() {
         return pass;
+    }
+
+    public ChatManager chat() {
+        return chat;
     }
 
     public String prefix() {

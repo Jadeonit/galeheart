@@ -30,6 +30,8 @@ public final class GaleCommand implements CommandExecutor {
             case "season" -> season(sender, args);
             case "quest" -> quest(sender);
             case "pass" -> pass(sender, args);
+            case "mute" -> mute(sender, args, true);
+            case "unmute" -> mute(sender, args, false);
             default -> false;
         };
     }
@@ -125,8 +127,7 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean pass(CommandSender sender, String[] args) {
-        if (args.length >= 3 && args[0].equalsIgnoreCase("add")) {
+    private boolean pass(CommandSender sender, String[] args) {        if (args.length >= 3 && args[0].equalsIgnoreCase("add")) {
             if (!sender.hasPermission("galeheart.admin")) {
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
                 return true;
@@ -173,6 +174,33 @@ public final class GaleCommand implements CommandExecutor {
             int have = plugin.quests().progress(data, quest, index);
             sender.sendMessage(Msg.parse("<gray>• " + quest.display() + " <dark_gray>— <white>"
                     + step.type().toLowerCase().replace('_', ' ') + " <gray>" + have + "/" + step.amount()));
+        }
+        return true;
+    }
+
+    private boolean mute(CommandSender sender, String[] args, boolean mute) {
+        if (!sender.hasPermission("galeheart.admin")) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
+            return true;
+        }
+        if (args.length < 1) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/" + (mute ? "mute" : "unmute") + " <player> [minutes]"));
+            return true;
+        }
+        Player target = Bukkit.getPlayerExact(args[0]);
+        if (target == null) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>Player not found."));
+            return true;
+        }
+        if (mute) {
+            int minutes = args.length > 1 ? parse(args[1], 10) : 10;
+            plugin.chat().mute(target, minutes);
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Muted " + target.getName() + " for " + minutes + " min."));
+            target.sendMessage(Msg.parse(plugin.prefix() + "<red>You are muted for " + minutes + " min."));
+        } else {
+            plugin.chat().unmute(target);
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Unmuted " + target.getName() + "."));
+            target.sendMessage(Msg.parse(plugin.prefix() + "<green>You are unmuted."));
         }
         return true;
     }

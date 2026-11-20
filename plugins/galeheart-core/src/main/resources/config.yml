@@ -65,6 +65,20 @@ spawn:
   platform: true
   platform-radius: 5
 
+chat:
+  enabled: true
+  max-length: 200
+  # Messages with more than this share of capital letters get lowercased.
+  caps-percent: 70
+  spam-window-seconds: 8
+  spam-max-messages: 4
+  blocked-substrings:
+    - "discord.gg/"
+    - "http://"
+    - "https://"
+    - "free nitro"
+    - "buy now"
+
 pass:
   enabled: true
   levels: 30
