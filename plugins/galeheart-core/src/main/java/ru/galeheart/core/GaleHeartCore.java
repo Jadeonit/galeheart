@@ -12,6 +12,7 @@ import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
 import ru.galeheart.core.notify.DiscordNotifier;
 import ru.galeheart.core.onboarding.StarterKit;
+import ru.galeheart.core.pass.PassGui;
 import ru.galeheart.core.pass.PassManager;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.season.SeasonManager;
@@ -29,6 +30,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private SpawnManager spawn;
     private BountyManager bounty;
     private PassManager pass;
+    private PassGui passGui;
     private ChatManager chat;
     private StarterKit kit;
 
@@ -50,11 +52,13 @@ public final class GaleHeartCore extends JavaPlugin {
         spawn = new SpawnManager(this);
         bounty = new BountyManager(this);
         pass = new PassManager(this);
+        passGui = new PassGui(this);
         chat = new ChatManager(this);
         kit = new StarterKit(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(passGui, this);
 
         GaleCommand executor = new GaleCommand(this);
         for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "grant", "bounty"}) {
@@ -116,6 +120,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public PassManager pass() {
         return pass;
+    }
+
+    public PassGui passGui() {
+        return passGui;
     }
 
     public ChatManager chat() {

@@ -94,26 +94,32 @@ pass:
     display: <red>Ember
     cost: 120
     prefix: '&c[Ember] '
+    icon: NAME_TAG
   - id: title-gale
     display: <aqua>Gale
     cost: 150
     prefix: '&b[Gale] '
+    icon: NAME_TAG
   - id: title-storm
     display: <dark_purple>Storm
     cost: 250
     prefix: '&5[Storm] '
+    icon: NAME_TAG
   - id: trail-heart
     display: <red>Heart trail
     cost: 200
     particle: HEART
+    icon: MAGMA_CREAM
   - id: trail-snow
     display: <white>Snow trail
     cost: 200
     particle: SNOWFLAKE
+    icon: SNOWBALL
   - id: trail-embers
     display: <gold>Ember trail
     cost: 300
     particle: FLAME
+    icon: BLAZE_POWDER
 bounty:
   enabled: true
   random-days: true

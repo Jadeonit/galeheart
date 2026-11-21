@@ -239,27 +239,21 @@ public final class GaleCommand implements CommandExecutor {
         }
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass add <player> <xp>"));
+            sender.sendMessage(Msg.parse(plugin.prefix()
+                    + "<gray>/pass add <player> <xp> <dark_gray>· /pass shards <player> <n>"));
             return true;
         }
-        if (args.length >= 1 && args[0].equalsIgnoreCase("shop")) {
-            PlayerData data = plugin.store().get(player.getUniqueId());
-            sender.sendMessage(Msg.parse("<gradient:#4FA9C9:#C8324B><bold>Cosmetic shop"));
-            for (PassManager.ShopItem item : plugin.pass().shopItems()) {
-                boolean owned = data.owned.contains(item.id());
-                sender.sendMessage(Msg.parse("<gray>• <white>" + item.id() + " <dark_gray>— " + item.display()
-                        + (owned ? " <green>owned" : " <gold>" + item.cost() + " shards")));
-            }
-            sender.sendMessage(Msg.parse("<dark_gray>/pass buy <id> <dark_gray>· /pass trail off"));
+        if (args.length >= 1 && args[0].equalsIgnoreCase("info")) {
+            int level = plugin.pass().level(player);
+            int into = plugin.pass().xpIntoLevel(plugin.pass().xp(player));
+            int need = level >= plugin.pass().maxLevel() ? 0 : plugin.pass().costForLevel(level);
+            sender.sendMessage(Msg.parse("<gradient:#4FA9C9:#C8324B><bold>Season Pass"));
+            sender.sendMessage(Msg.parse("<gray>Level <white>" + level + "<gray>/" + plugin.pass().maxLevel()
+                    + (need > 0 ? " <dark_gray>(" + into + "/" + need + " xp)" : " <green>max")));
+            sender.sendMessage(Msg.parse("<gray>Shards: <white>" + plugin.pass().shards(player)));
             return true;
         }
-        int level = plugin.pass().level(player);
-        int into = plugin.pass().xpIntoLevel(plugin.pass().xp(player));
-        int need = level >= plugin.pass().maxLevel() ? 0 : plugin.pass().costForLevel(level);
-        sender.sendMessage(Msg.parse("<gradient:#4FA9C9:#C8324B><bold>Season Pass"));
-        sender.sendMessage(Msg.parse("<gray>Level <white>" + level + "<gray>/" + plugin.pass().maxLevel()
-                + (need > 0 ? " <dark_gray>(" + into + "/" + need + " xp)" : " <green>max")));
-        sender.sendMessage(Msg.parse("<gray>Shards: <white>" + plugin.pass().shards(player)));
+        plugin.passGui().open(player);
         return true;
     }
 

@@ -28,7 +28,7 @@ Seasonal lifesteal SMP. The twist: the sky is hostile.
 Java 1.21.11 · EU · 60 slots · fresh world
 `d3.rionix.cloud:25039`
 
-Discord: <your invite>
+Discord: https://discord.gg/g9XANw8Wa
 ```
 
 ## Long (communities that enjoy a story)
@@ -52,7 +52,7 @@ We are small on purpose. Season 1 just started, the world is fresh, and the firs
 
 **Java 1.21.11 · EU · 60 slots**
 `d3.rionix.cloud:25039`
-Discord: <your invite>
+Discord: https://discord.gg/g9XANw8Wa
 ```
 
 ## Posting tips

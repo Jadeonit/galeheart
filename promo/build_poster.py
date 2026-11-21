@@ -57,8 +57,9 @@ def build():
     draw.text((W // 2, 845), "Sealed Nether and End  ·  Cosmetic season pass", font=font(32, bold=False),
               fill=(160, 180, 200), anchor="mm")
 
-    draw.text((W // 2, 950), "d3.rionix.cloud:25039", font=font(52), fill=(255, 255, 255), anchor="mm")
-    draw.text((W // 2, 1015), "Java 1.21.11  ·  EU  ·  60 slots", font=font(24, bold=False),
+    draw.text((W // 2, 935), "d3.rionix.cloud:25039", font=font(52), fill=(255, 255, 255), anchor="mm")
+    draw.text((W // 2, 995), "discord.gg/g9XANw8Wa", font=font(34), fill=(111, 176, 214), anchor="mm")
+    draw.text((W // 2, 1045), "Java 1.21.11  ·  EU", font=font(24, bold=False),
               fill=(120, 140, 160), anchor="mm")
 
     img.convert("RGB").save(OUT, quality=95)

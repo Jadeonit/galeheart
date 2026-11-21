@@ -11,10 +11,11 @@ Everything a player or an admin can type. No teleports anywhere: `/home`, `/tpa`
 | `/hearts withdraw <n>` | Turn hearts into droppable heart items (floor is 1) |
 | `/bounty` | Your current contract - the player you are hunting |
 | `/top` | Hearts leaderboard, top 10 |
-| `/pass` | Season pass level, XP into the level, shards |
-| `/pass shop` | Cosmetic shop - titles and particle trails, paid in shards |
-| `/pass buy <id>` | Buy an item from the shop |
+| `/pass` | Opens the season pass menu: level, shards, cosmetic shop |
+| `/pass shop` | Same menu |
+| `/pass buy <id>` | Buy without opening the menu |
 | `/pass trail off` | Turn your particle trail off |
+| `/pass info` | Text version, for screenshots |
 | `/quest` | Quest chains and their progress |
 | `/season` | Season state (finale on or off) |
 

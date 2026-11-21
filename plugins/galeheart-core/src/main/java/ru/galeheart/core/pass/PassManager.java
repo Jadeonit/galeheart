@@ -204,7 +204,7 @@ public final class PassManager {
 
     // ------------------------------------------------------------ cosmetics
 
-    public record ShopItem(String id, String display, int cost, String prefix, String particle) {
+    public record ShopItem(String id, String display, int cost, String prefix, String particle, String icon) {
     }
 
     public List<ShopItem> shopItems() {
@@ -224,7 +224,8 @@ public final class PassManager {
                     display == null ? String.valueOf(id) : String.valueOf(display),
                     cost instanceof Number number ? number.intValue() : 100,
                     raw.get("prefix") == null ? "" : String.valueOf(raw.get("prefix")),
-                    raw.get("particle") == null ? "" : String.valueOf(raw.get("particle"))));
+                    raw.get("particle") == null ? "" : String.valueOf(raw.get("particle")),
+                    raw.get("icon") == null ? "PAPER" : String.valueOf(raw.get("icon"))));
         }
         return items;
     }
@@ -283,6 +284,16 @@ public final class PassManager {
 
     public String trail(Player player) {
         return plugin.store().get(player.getUniqueId()).trail;
+    }
+
+    /** Equips an already owned trail. */
+    public void equipTrail(Player player, String id) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (!data.owned.contains(id)) {
+            return;
+        }
+        data.trail = id;
+        plugin.store().write(data);
     }
 
     /** Called twice a second: renders the equipped trail. */
