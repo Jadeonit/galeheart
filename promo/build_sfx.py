@@ -1,0 +1,192 @@
+"""Adds timed sound effects to the promo clips. No external audio files."""
+
+from __future__ import annotations
+
+import os
+import subprocess
+import wave
+
+import imageio_ffmpeg
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+SR = 44100
+PEAK = 0.85
+
+
+def envelope(n, attack=0.01, release=0.2, curve=3.0):
+    attack_n = max(1, int(SR * attack))
+    release_n = max(1, int(SR * release))
+    env = np.ones(n, dtype=np.float64)
+    env[:attack_n] = np.linspace(0.0, 1.0, attack_n)
+    tail = np.linspace(1.0, 0.0, release_n) ** curve
+    if release_n < n:
+        env[-release_n:] = tail
+    else:
+        env = tail[:n]
+    return env
+
+
+def lowpass(signal, cutoff_start, cutoff_end):
+    """One-pole low pass with a moving cutoff, in normalised frequency 0..0.5."""
+    out = np.empty_like(signal)
+    y = 0.0
+    n = len(signal)
+    for index in range(n):
+        t = index / max(1, n - 1)
+        cutoff = cutoff_start + (cutoff_end - cutoff_start) * t
+        alpha = 1.0 - np.exp(-2.0 * np.pi * cutoff)
+        y += alpha * (signal[index] - y)
+        out[index] = y
+    return out
+
+
+def whoosh():
+    rng = np.random.default_rng(7)
+    n = int(SR * 0.75)
+    noise = rng.standard_normal(n)
+    body = lowpass(noise, 0.02, 0.18)
+    # fall back down so it reads as air moving past, not a hiss
+    body *= np.linspace(0.55, 1.0, n) * np.linspace(1.0, 0.35, n)
+    return body * envelope(n, 0.12, 0.45, 2.0) * 0.55
+
+
+def impact():
+    n = int(SR * 0.9)
+    t = np.arange(n) / SR
+    freq = 130.0 * np.exp(-t * 3.2) + 42.0
+    phase = 2.0 * np.pi * np.cumsum(freq) / SR
+    body = np.sin(phase) * np.exp(-t * 3.6)
+    rng = np.random.default_rng(11)
+    crack = rng.standard_normal(n) * np.exp(-t * 26.0) * 0.35
+    return (body + crack) * 0.9
+
+
+def tick():
+    n = int(SR * 0.12)
+    t = np.arange(n) / SR
+    tone = np.sin(2.0 * np.pi * 2100.0 * t) * np.exp(-t * 70.0)
+    rng = np.random.default_rng(3)
+    click = rng.standard_normal(n) * np.exp(-t * 90.0) * 0.25
+    return (tone * 0.5 + click) * envelope(n, 0.002, 0.05, 2.0)
+
+
+def chime():
+    n = int(SR * 1.4)
+    t = np.arange(n) / SR
+    base = np.sin(2.0 * np.pi * 880.0 * t) * np.exp(-t * 2.6)
+    fifth = np.sin(2.0 * np.pi * 1320.0 * t) * np.exp(-t * 3.4) * 0.55
+    shimmer = np.sin(2.0 * np.pi * 2640.0 * t) * np.exp(-t * 6.0) * 0.22
+    return (base + fifth + shimmer) * envelope(n, 0.004, 0.5, 2.4) * 0.6
+
+
+SFX = {
+    "whoosh": whoosh(),
+    "impact": impact(),
+    "tick": tick(),
+    "chime": chime(),
+}
+
+# seconds -> effect, matching the text beats in build_videos.py
+TIMELINES = {
+    "vertical.mp4": [
+        (0.05, "whoosh", 0.7),
+        (0.60, "whoosh", 1.0),
+        (2.00, "impact", 0.9),
+        (3.20, "tick", 1.0),
+        (3.90, "tick", 0.95),
+        (4.60, "tick", 0.95),
+        (5.30, "tick", 0.95),
+        (6.00, "tick", 0.95),
+        (6.70, "tick", 0.95),
+        (8.00, "chime", 0.8),
+    ],
+    "alert.mp4": [
+        (0.00, "impact", 0.85),
+        (1.00, "impact", 0.7),
+        (1.00, "whoosh", 0.6),
+        (3.60, "chime", 0.55),
+    ],
+    "bounty.mp4": [
+        (0.20, "impact", 0.85),
+        (0.90, "tick", 0.9),
+        (1.60, "tick", 0.9),
+        (2.30, "tick", 0.9),
+        (3.20, "impact", 0.55),
+        (4.00, "tick", 0.9),
+        (4.80, "chime", 0.6),
+    ],
+    "square.mp4": [
+        (0.10, "whoosh", 0.6),
+        (1.20, "chime", 0.4),
+    ],
+}
+
+
+def duration(path):
+    probe = imageio_ffmpeg.read_frames(path)
+    meta = next(probe)
+    probe.close()
+    return float(meta["duration"])
+
+
+def render(path, events):
+    total = duration(path)
+    track = np.zeros(int(SR * (total + 0.4)), dtype=np.float64)
+    for start, name, gain in events:
+        clip = SFX[name] * gain
+        offset = int(start * SR)
+        end = min(len(track), offset + len(clip))
+        track[offset:end] += clip[: end - offset]
+
+    peak = np.max(np.abs(track))
+    if peak > 0:
+        track = track / peak * PEAK
+    pcm = (np.clip(track, -1.0, 1.0) * 32767).astype("<i2")
+
+    wav_path = os.path.join(HERE, "_" + os.path.splitext(os.path.basename(path))[0] + ".wav")
+    with wave.open(wav_path, "wb") as handle:
+        handle.setnchannels(1)
+        handle.setsampwidth(2)
+        handle.setframerate(SR)
+        handle.writeframes(pcm.tobytes())
+    return wav_path, len(track) / SR
+
+
+def mux(video, wav_path, out_path):
+    ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    cmd = [
+        ffmpeg, "-y",
+        "-i", video,
+        "-i", wav_path,
+        "-c:v", "copy",
+        "-c:a", "aac",
+        "-b:a", "160k",
+        "-ar", "44100",
+        "-af", "loudnorm=I=-16:TP=-1.5:LRA=11",
+        "-shortest",
+        out_path,
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    if result.returncode != 0:
+        print("ffmpeg failed", result.stderr[-400:])
+        raise SystemExit(1)
+
+
+def build():
+    for name, events in TIMELINES.items():
+        video = os.path.join(HERE, name)
+        if not os.path.exists(video):
+            print("missing", video)
+            continue
+        wav_path, length = render(video, events)
+        tmp = os.path.join(HERE, "_" + name)
+        mux(video, wav_path, tmp)
+        os.replace(tmp, video)
+        os.remove(wav_path)
+        print("sound added", name, f"{length:.1f}s")
+
+
+if __name__ == "__main__":
+    build()

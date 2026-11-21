@@ -32,7 +32,7 @@ https://discord.com/oauth2/authorize?client_id=1573444878065602570&permissions=5
 | `#minecraft-chat` | text | DiscordSRV bridge both ways |
 | `#main-chat` | text | general |
 | `#your-suggests` | text | ideas |
-| `#support` | text | donation tickets, reports (create it) |
+| `#store` | text | donation questions and rank delivery (create it) |
 
 `#announcements` works with the bot alone. `#events` currently receives posts
 through its webhook because the bot lacks channel access there; either grant the

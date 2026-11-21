@@ -61,7 +61,7 @@ Java 1.21.11 · EU · offline mode, no launcher required
 1. No cheating, no x-ray, no macros. GrimAC is on and logs everything.
 2. No doxxing, no slurs, no spam.
 3. Griefing and stealing are part of the game. Scamming inside trades is not.
-4. No exploiting bugs. Report them in `#support` and get a reward instead.
+4. No exploiting bugs. Report them to staff in `#main-chat` and get a reward instead.
 
 **Commands**
 `/hearts` · `/bounty` · `/pass` · `/quest` · `/top` · `/season`

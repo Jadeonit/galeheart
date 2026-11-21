@@ -26,7 +26,7 @@ If a perk would touch combat or progression, it does not exist.
 
 Payments are manual for now. There is no automated checkout, so the flow is:
 
-1. Player opens a ticket in `#support` on Discord.
+1. Player asks in `#store` on Discord.
 2. Player states the rank and their in-game name.
 3. You confirm payment (bank transfer, crypto, PayPal - whatever you accept).
 4. You run one command in game or in the panel console:

@@ -39,7 +39,7 @@ to open yet.
 - [ ] `#announcements` messages are published (announcement channel, bot owns them)
 - [ ] `#events` receives event and donation posts
 - [ ] `#server-info` readable
-- [ ] `#support` exists for donation tickets
+- [ ] `#store` exists for donation questions
 - [ ] store link added to `#announcements` topic and to the poster
 
 Permissions the bot still needs for full coverage: `Manage Messages` (delete other
