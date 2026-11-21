@@ -12,7 +12,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 SR = 44100
-PEAK = 0.85
+PEAK = 0.42
 
 
 def envelope(n, attack=0.01, release=0.2, curve=3.0):
@@ -164,7 +164,7 @@ def mux(video, wav_path, out_path):
         "-c:a", "aac",
         "-b:a", "160k",
         "-ar", "44100",
-        "-af", "loudnorm=I=-16:TP=-1.5:LRA=11",
+        "-af", "loudnorm=I=-23:TP=-2.0:LRA=11",
         "-shortest",
         out_path,
     ]

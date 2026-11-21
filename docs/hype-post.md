@@ -3,7 +3,60 @@
 Fill the date and time, everything else is ready. Post the image first
 (`promo/poster.png`), then the text.
 
-## 1. Discord announcement
+## 1. Self-promotion post (main one)
+
+```
+**GaleHeart — Season 1: Acid Sky** · opening [DATE]
+
+Most SMPs hand you a safe spawn, a /home and a warm welcome.
+Here you get ten hearts, a stone sword, and a weather report that reads like a death sentence.
+
+• **Lifesteal** — kill to take a heart, die to lose one. Twenty is the ceiling, one is a countdown.
+• **Anomalous weather** — acid rain, fire rain, blizzards, toxic fog. One hour of warning, then it lands. The storm does not care who you are.
+• **No teleports** — no /home, no /tpa, no /spawn. Beds and your legs. Bases stay hidden because getting there is hard.
+• **Personal bounties** — everyone carries a contract with someone's name on it. Kill them, take the heart, get a new name.
+• **Sealed Nether and End** — open them with quests, not with luck.
+• **Season pass** — a chest menu of cosmetics. Titles, particle trails, zero advantage.
+
+Ten hearts. One world. Eight weeks.
+Java 1.21.11 · EU · offline mode, any launcher · fresh world
+
+`d3.rionix.cloud:25039`
+Discord: https://discord.gg/g9XANw8Wa
+```
+
+## 2. Short version (strict channels, feeds)
+
+```
+**GaleHeart — Season 1: Acid Sky** · opening [DATE]
+
+Lifesteal SMP where the sky is hostile. No teleports, personal bounty contracts, sealed Nether and End, cosmetics-only season pass.
+
+Java 1.21.11 · EU · `d3.rionix.cloud:25039`
+Discord: https://discord.gg/g9XANw8Wa
+```
+
+## 3. Micro (one line, for comment replies)
+
+```
+Lifesteal + acid rain every day. Ten hearts, no teleports, everyone has a bounty. d3.rionix.cloud:25039
+```
+
+## 4. Reddit title + body
+
+Title:
+
+```
+[EU] [Java 1.21.11] GaleHeart — lifesteal SMP where the weather is trying to kill you. No teleports, personal bounties, fresh world
+```
+
+Body: use the self-promotion post above, then add:
+
+```
+Offline mode, so any launcher works. Whitelist off. Season 1 just started.
+```
+
+## 5. Discord announcement (your own server)
 
 ```
 **GaleHeart opens [DATE] at [TIME] UTC**
@@ -13,10 +66,10 @@ A lifesteal SMP where the sky is hostile.
 
 • **Hearts** — start with 10, kill to take one, die to lose one. 20 is the ceiling.
 • **Weather** — acid rain, fire rain, blizzards, toxic fog. One hour of warning, then it hits. Build a roof or craft the protection item.
-• **No teleports** — no /home, no /tpa, no /spawn. Beds are your only anchor.
-• **Bounty** — personal contracts. Everyone gets a random target. Kill them, take a heart, get a new name.
-• **Sealed Nether and End** — unlock them with quests, not with luck.
-• **Season pass** — a chest menu with cosmetics only: titles and particle trails. No kits, no hearts, no advantage.
+• **No teleports** — beds are your only anchor.
+• **Bounty** — personal contracts, everyone gets a random target. Kill them, take a heart, get a new name.
+• **Sealed Nether and End** — unlock them with quests, not luck.
+• **Season pass** — a chest menu with cosmetics only: titles and particle trails.
 
 **How to play**
 1. Read `#server-info`
@@ -26,19 +79,7 @@ A lifesteal SMP where the sky is hostile.
 Invite your duo. First alliances decide the season.
 ```
 
-## 2. Short version (self-promotion channels)
-
-```
-**GaleHeart — Season 1: Acid Sky** · opening [DATE]
-
-Lifesteal SMP where the weather is trying to kill you. No teleports, personal bounty contracts, sealed Nether and End, cosmetics-only season pass.
-
-Java 1.21.11 · EU · fresh world
-`d3.rionix.cloud:25039`
-Discord: https://discord.gg/g9XANw8Wa
-```
-
-## 3. TikTok / Reels caption
+## 6. TikTok / Reels caption
 
 ```
 The weather wants you dead.
@@ -49,7 +90,7 @@ discord in bio · java 1.21.11
 
 Hashtags: `#minecraft #smp #lifesteal #minecraftserver #mcsmp #minecraftjava`
 
-## 4. Pinned message for `#server-info`
+## 7. Pinned message for `#server-info`
 
 ```
 **GaleHeart · Season 1: Acid Sky**
@@ -71,19 +112,24 @@ Java 1.21.11 · EU · offline mode, no launcher required
 **No teleports:** beds only. `/home`, `/tpa`, `/spawn` do not exist by design.
 ```
 
-## 5. Where to post
+## 8. Where to post
 
-- `#self-promotion`, `#server-ads`, `#minecraft-servers` in the big SMP Discords — read the rules first, one post per server, no bump spam.
-- r/minecraftserver, r/MinecraftBuddies — title with the hook, image attached, invite in the body.
-- Planet Minecraft and TopG — listing pages, good long-term traffic.
-- TikTok/Shorts/Reels — `promo/vertical.mp4`, `alert.mp4`, `bounty.mp4`, caption says "discord in bio".
-- Best window: 17:00–21:00 UTC, EU awake and US East starting.
+| Place | What to post |
+|---|---|
+| `#self-promotion`, `#server-ads`, `#minecraft-servers` in SMP Discords | section 1 + poster |
+| r/minecraftserver, r/MinecraftBuddies | section 4 |
+| Planet Minecraft, TopG, Minecraft-MP | listing page, poster as cover |
+| TikTok / Shorts / Reels | `vertical.mp4`, `alert.mp4`, `bounty.mp4` + section 6 |
+| Your own `#announcements` | section 5, pinned |
 
-## 6. Reply script for the first hour
+Rules that keep reach: one post per server, no bump spam, read the channel rules,
+attach an image, post 17:00–21:00 UTC.
 
-People ask the same three things. Answer fast, activity keeps the post visible.
+## 9. Reply script for the first hour
+
+People ask the same four things. Answer fast, activity keeps the post visible.
 
 - **"Cracked?"** → "Yes, offline mode. Any launcher, no premium needed."
-- **"How many slots?"** → "60, and 1.21.11 on the client."
-- **"Is it pay to win?"** → "No. Donations are cosmetic only — titles and particle trails."
-- **"Can I bring friends?"** → "Yes, send them the invite. Groups get a bounty target each."
+- **"How many slots?"** → "60, and the client has to be 1.21.11."
+- **"Pay to win?"** → "No. Donations are cosmetic only — titles and particle trails."
+- **"Can I bring friends?"** → "Yes. Send them the invite, everyone gets their own bounty target."
