@@ -33,6 +33,12 @@ followers now get the push.
 - Test messages wiped from both channels. A launch post is pinned in
   `#announcements`.
 
+### Duel deaths no longer move hearts
+
+`hearts.ignored-worlds: [arena]`. A death in the arena world skips the heart
+loss, the contract payout and the season pass kill XP, so duels stay friendly.
+Arena wins are still handled by the arena plugin itself.
+
 ### Donations
 
 - LuckPerms groups created: `supporter` (weight 5, `&6[Supporter]`), `patron`

@@ -66,6 +66,11 @@ public final class CoreListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
+        if (plugin.getConfig().getStringList("hearts.ignored-worlds").stream()
+                .anyMatch(world -> world.equalsIgnoreCase(victim.getWorld().getName()))) {
+            // duels and other side worlds do not move hearts or pay contracts
+            return;
+        }
         plugin.hearts().onDeath(victim, victim.getKiller());
         plugin.bounty().handleDeath(victim, victim.getKiller());
         if (victim.getKiller() != null && !victim.getKiller().equals(victim)) {

@@ -3,6 +3,8 @@ hearts:
   start: 10
   min: 1
   max: 20
+  ignored-worlds:
+  - arena
   min-penalty:
     enabled: true
     seconds: 600
