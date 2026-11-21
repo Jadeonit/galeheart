@@ -60,6 +60,15 @@ public final class DataStore {
         player.lastDeath = section.getLong("last-death", 0L);
         player.lastKill = section.getLong("last-kill", 0L);
         player.protectionUntil = section.getLong("protection-until", 0L);
+        String target = section.getString("bounty-target", "");
+        if (!target.isBlank()) {
+            try {
+                player.targetId = UUID.fromString(target);
+            } catch (IllegalArgumentException ignored) {
+                player.targetId = null;
+            }
+        }
+        player.targetName = section.getString("bounty-target-name", "");
         player.passXp = section.getInt("pass-xp", 0);
         player.shards = section.getInt("shards", 0);
         player.dailyShards = section.getInt("daily-shards", 0);
@@ -106,6 +115,8 @@ public final class DataStore {
         data.set(path + ".last-death", player.lastDeath);
         data.set(path + ".last-kill", player.lastKill);
         data.set(path + ".protection-until", player.protectionUntil);
+        data.set(path + ".bounty-target", player.targetId == null ? null : player.targetId.toString());
+        data.set(path + ".bounty-target-name", player.targetName);
         data.set(path + ".pass-xp", player.passXp);
         data.set(path + ".shards", player.shards);
         data.set(path + ".daily-shards", player.dailyShards);

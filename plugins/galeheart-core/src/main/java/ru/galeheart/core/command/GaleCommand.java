@@ -33,6 +33,7 @@ public final class GaleCommand implements CommandExecutor {
             case "quest" -> quest(sender);
             case "pass" -> pass(sender, args);
             case "grant" -> grant(sender, args);
+            case "bounty" -> bounty(sender);
             default -> false;
         };
     }
@@ -143,10 +144,25 @@ public final class GaleCommand implements CommandExecutor {
                         sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Bounty stopped."));
                     }
                     default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Bounty: "
-                            + (plugin.bounty().active() ? "<red>" + plugin.bounty().targetName() : "<green>not active")));
+                            + (plugin.bounty().active() ? "<red>" + plugin.bounty().status() : "<green>not active")));
                 }
             }
             default -> sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/season finale|stop|reset|announce <text>|info"));
+        }
+        return true;
+    }
+
+    private boolean bounty(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Use /bounty in game."));
+            return true;
+        }
+        String name = plugin.bounty().targetName(player);
+        if (name == null) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>No contract yet. Need another player online."));
+        } else {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Your contract: <white>" + name
+                    + " <dark_gray>· <gray>kill them for <red>+1 heart"));
         }
         return true;
     }
@@ -168,7 +184,8 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean pass(CommandSender sender, String[] args) {        if (args.length >= 3 && args[0].equalsIgnoreCase("add")) {
+    private boolean pass(CommandSender sender, String[] args) {
+        if (args.length >= 3 && args[0].equalsIgnoreCase("add")) {
             if (!sender.hasPermission("galeheart.admin")) {
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
                 return true;
@@ -197,7 +214,8 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean quest(CommandSender sender) {        if (!(sender instanceof Player player)) {
+    private boolean quest(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
             return true;
         }
         PlayerData data = plugin.store().get(player.getUniqueId());
@@ -246,7 +264,8 @@ public final class GaleCommand implements CommandExecutor {
         return true;
     }
 
-    private static int parse(String raw, int fallback) {        try {
+    private static int parse(String raw, int fallback) {
+        try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException exception) {
             return fallback;

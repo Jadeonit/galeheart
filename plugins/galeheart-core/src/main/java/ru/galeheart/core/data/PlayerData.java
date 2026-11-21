@@ -26,6 +26,10 @@ public final class PlayerData {
     public final Map<String, Integer> dailyXp = new HashMap<>();
     public final Map<UUID, Long> killCooldowns = new HashMap<>();
 
+    // Bounty contract
+    public UUID targetId;
+    public String targetName = "";
+
     /** "questId:stepIndex" -> progress. */
     public final Map<String, Integer> questProgress = new HashMap<>();
     public final Set<String> questsDone = new HashSet<>();

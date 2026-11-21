@@ -1,109 +1,78 @@
-# GaleHeartCore — hearts, cooldowns, cooling, seasons, quests
-
-prefix: "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> "
-
+prefix: '<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> '
 hearts:
-  # Hearts a new player starts with. 1 heart = 2 HP.
   start: 10
   min: 1
   max: 20
-  # Dying on the last heart costs time instead of a heart.
   min-penalty:
     enabled: true
     seconds: 600
     effects:
-      - "WEAKNESS:1"
-      - "SLOWNESS:1"
-
+    - WEAKNESS:1
+    - SLOWNESS:1
   item:
     material: NETHER_STAR
-    name: "<red><bold>Heart"
+    name: <red><bold>Heart
     lore:
-      - "<gray>Right-click to gain <red>+1 heart"
-      - "<dark_gray>Max {max} hearts"
-
+    - <gray>Right-click to gain <red>+1 heart
+    - <dark_gray>Max {max} hearts
 protection:
-  # New players are fully immune to players for this many hours after first join.
   new-player-hours: 24
-  # After a death a player cannot lose another heart for this long.
   death-cooldown-seconds: 180
-  # Combat tag: blocks duels/teleports after taking or dealing player damage.
   combat-tag-seconds: 15
-
 cooling:
-  # Hearts above this value decay without PvP kills.
   enabled: true
   above: 16
   hours-without-kill: 48
-
 season:
-  # Finale: everyone drops to one heart for this long.
   one-heart-seconds: 1800
-  # Finale: world border size and how long it takes to shrink.
   border-size: 500
   border-shrink-seconds: 600
-  # Border restored to this on season reset / finale end.
   default-border: 60000
-
-# Quest step format: TYPE:ARG:AMOUNT
-#   KILL_MOB:<EntityType>:<amount>
-#   COLLECT_ITEM:<Material>:<amount>   (items are consumed on completion)
 quests:
   nether:
-    display: "<dark_purple>The Nether Key"
-    permission: "galeheart.nether"
+    display: <dark_purple>The Nether Key
+    permission: galeheart.nether
     steps:
-      - "KILL_MOB:ZOMBIE:50"
-      - "COLLECT_ITEM:DIAMOND:16"
+    - KILL_MOB:ZOMBIE:50
+    - COLLECT_ITEM:DIAMOND:16
   end:
-    display: "<light_purple>The End Key"
-    permission: "galeheart.end"
+    display: <light_purple>The End Key
+    permission: galeheart.end
     steps:
-      - "KILL_MOB:BLAZE:30"
-      - "COLLECT_ITEM:ENDER_PEARL:16"
-
+    - KILL_MOB:BLAZE:30
+    - COLLECT_ITEM:ENDER_PEARL:16
 starter-kit:
   enabled: true
   items:
-    - "STONE_SWORD:1"
-    - "STONE_PICKAXE:1"
-    - "STONE_AXE:1"
-    - "BREAD:8"
-    - "OAK_LOG:16"
-    - "TORCH:16"
-    - "WHITE_BED:1"
-
+  - STONE_SWORD:1
+  - STONE_PICKAXE:1
+  - STONE_AXE:1
+  - BREAD:8
+  - OAK_LOG:16
+  - TORCH:16
+  - WHITE_BED:1
 spawn:
-  # First join: drop the player into the wild this many blocks from world spawn.
-  # 0 — spawn exactly at the world spawn point.
   first-join-radius: 250
-  # Vanilla respawn scatter radius (gamerule spawnRadius).
   respawn-radius: 30
-  # Build the small starter platform once. It is not protected.
   platform: true
   platform-radius: 5
-
 chat:
   enabled: true
   max-length: 200
-  # Messages with more than this share of capital letters get lowercased.
   caps-percent: 70
   spam-window-seconds: 8
   spam-max-messages: 4
   blocked-substrings:
-    - "discord.gg/"
-    - "http://"
-    - "https://"
-    - "free nitro"
-    - "buy now"
-
+  - discord.gg/
+  - http://
+  - https://
+  - free nitro
+  - buy now
 pass:
   enabled: true
   levels: 30
-  # XP to go from level N to N+1 = base + step * (N-1)
   xp-base: 500
   xp-step: 20
-  # Grind sources are capped per day; event sources are not.
   daily-caps:
     vanilla-xp: 300
     playtime: 300
@@ -117,37 +86,27 @@ pass:
   kills:
     xp: 40
     victim-cooldown-hours: 1
-  # Commands run on level up, per level. %player% is replaced.
   rewards: {}
-
 bounty:
   enabled: true
-  # Days and local server time. 2-3 per week is the sweet spot.
-  # true - pick N random days each week. false - use the list below.
   random-days: true
   days-per-week: 3
-  # Used only when random-days is false.
-  days: [ FRIDAY, SATURDAY, SUNDAY ]
-  time: "19:00"
-  # Only start within this many minutes after the scheduled time.
+  days:
+  - FRIDAY
+  - SATURDAY
+  - SUNDAY
+  time: '19:00'
   window-minutes: 90
   duration-minutes: 20
-  # Only players above this many hearts can become the target.
-  min-hearts: 8
   reward-hearts: 1
-  survivor-hearts: 1
-  skip-staff: true
-  arena-world: "arena"
-
-# Event notifications.
-# Easiest: paste a Discord webhook URL below, no bot needed.
-# If webhook is empty, events are POSTed to discord.endpoint (the Python bot).
+  window-multiplier: 2
 discord:
-  enabled: false
-  webhook: ""
-  # Display name and avatar for webhook messages.
-  # avatar must be a public image URL; leave empty to use the webhook's own avatar.
-  name: "GaleHeart"
-  avatar: ""
-  endpoint: "http://127.0.0.1:8099/event"
-  secret: ""
+  enabled: true
+  webhook: ''
+  name: GaleHeart
+  avatar: ''
+  endpoint: http://127.0.0.1:8099/event
+  secret: ''
+  bot-token: ''
+  channel-id: ''
+  crosspost: true

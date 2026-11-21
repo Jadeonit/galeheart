@@ -1,27 +1,17 @@
 package ru.galeheart.core.bounty;
 
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import ru.galeheart.core.GaleHeartCore;
-import ru.galeheart.core.combat.CombatManager;
 import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.util.Msg;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -30,48 +20,136 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Weekly bounty: the leader gets hunted for a fixed window.
- * Everyone receives a compass pointing at the target.
+ * Personal bounty contracts. Every player has one random target; killing it
+ * pays hearts and rerolls the contract. A scheduled window doubles the payout.
  */
 public final class BountyManager {
 
     private final GaleHeartCore plugin;
-    private final NamespacedKey compassKey;
-
-    private UUID targetId;
-    private long endsAt;
-    private LocalDate lastRun;
-    private BossBar targetBar;
-    private final Set<UUID> compassGiven = new HashSet<>();
     private final Random random = new Random();
     private final Set<DayOfWeek> chosenDays = new HashSet<>();
+
     private int chosenWeek = -1;
     private LocalDate warnedDay;
+    private LocalDate lastRun;
+
+    private boolean active;
+    private long endsAt;
+    private BossBar bar;
 
     public BountyManager(GaleHeartCore plugin) {
         this.plugin = plugin;
-        this.compassKey = new NamespacedKey(plugin, "bounty_compass");
     }
 
     public boolean active() {
-        return targetId != null;
+        return active;
     }
+
+    // ------------------------------------------------------------ contracts
+
+    /** Assigns a target if the player has none, or theirs is offline. */
+    public void ensureTarget(Player player) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (data.targetId != null) {
+            if (!data.targetId.equals(player.getUniqueId()) && Bukkit.getPlayer(data.targetId) != null) {
+                return;
+            }
+        }
+        assign(player);
+    }
+
+    private void assign(Player player) {
+        List<Player> pool = new ArrayList<>();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (!online.equals(player)) {
+                pool.add(online);
+            }
+        }
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (pool.isEmpty()) {
+            data.targetId = null;
+            data.targetName = "";
+            plugin.store().write(data);
+            return;
+        }
+        Player target = pool.get(random.nextInt(pool.size()));
+        data.targetId = target.getUniqueId();
+        data.targetName = target.getName();
+        plugin.store().write(data);
+    }
+
+    public String targetName(Player player) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (data.targetId == null) {
+            assign(player);
+            data = plugin.store().get(player.getUniqueId());
+        }
+        if (data.targetId == null) {
+            return null;
+        }
+        Player online = Bukkit.getPlayer(data.targetId);
+        if (online != null) {
+            return online.getName();
+        }
+        return data.targetName == null || data.targetName.isBlank() ? null : data.targetName;
+    }
+
+    /** Called from PlayerDeathEvent. Pays out when the killer's contract is the victim. */
+    public void handleDeath(Player victim, Player killer) {
+        if (killer == null || killer.equals(victim)) {
+            return;
+        }
+        PlayerData data = plugin.store().get(killer.getUniqueId());
+        if (data.targetId == null || !data.targetId.equals(victim.getUniqueId())) {
+            return;
+        }
+        int base = Math.max(0, plugin.getConfig().getInt("bounty.reward-hearts", 1));
+        int multiplier = active ? Math.max(1, plugin.getConfig().getInt("bounty.window-multiplier", 2)) : 1;
+        int reward = base * multiplier;
+        if (reward > 0) {
+            plugin.hearts().add(killer, reward);
+        }
+        Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gold>" + killer.getName() + "<gray> completed the contract on <white>"
+                + victim.getName() + "<gray>. <red>+" + reward + " heart"));
+        assign(killer);
+        String next = targetName(killer);
+        if (next != null) {
+            killer.sendMessage(Msg.parse(plugin.prefix() + "<gray>New contract: <white>" + next));
+        }
+    }
+
+    /** Rerolls contracts pointing at a player who just left. */
+    public void onQuit(Player player) {
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.equals(player)) {
+                continue;
+            }
+            PlayerData data = plugin.store().get(online.getUniqueId());
+            if (player.getUniqueId().equals(data.targetId)) {
+                assign(online);
+                String next = targetName(online);
+                if (next != null) {
+                    online.sendMessage(Msg.parse(plugin.prefix() + "<gray>Contract rerolled: <white>" + next));
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------ window
 
     public void tick() {
         if (!plugin.getConfig().getBoolean("bounty.enabled", true)) {
             return;
         }
-        if (targetId != null) {
-            Player target = Bukkit.getPlayer(targetId);
-            if (target == null || !target.isOnline()) {
-                finish(false, "The bounty target left the server.");
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            ensureTarget(online);
+        }
+        if (active) {
+            if (System.currentTimeMillis() >= endsAt) {
+                finish();
                 return;
             }
-            updateBar(target);
-            updateCompasses(Bukkit.getPlayer(targetId));
-            if (System.currentTimeMillis() >= endsAt) {
-                finish(true, null);
-            }
+            updateBar();
             return;
         }
         if (shouldStartNow()) {
@@ -79,12 +157,29 @@ public final class BountyManager {
             return;
         }
         if (shouldWarnNow()) {
-            Bukkit.broadcast(Msg.parse(plugin.prefix() + "<red><bold>BOUNTY<red> in 10 minutes. <gray>Get your compass ready."));
-            plugin.notifier().send("Bounty soon", "The bounty starts in 10 minutes.", 0xE67E22);
+            Bukkit.broadcast(Msg.parse(plugin.prefix()
+                    + "<red><bold>BOUNTY<red> in 10 minutes. <gray>Contracts pay double."));
+            plugin.notifier().send("Bounty soon", "Contracts pay double in 10 minutes.", 0xE67E22);
         }
     }
 
-    /** True exactly once, ten minutes before the scheduled start on a bounty day. */
+    private boolean shouldStartNow() {
+        LocalDate today = LocalDate.now();
+        if (lastRun != null && lastRun.equals(today)) {
+            return false;
+        }
+        LocalTime time = parseTime(plugin.getConfig().getString("bounty.time", "19:00"));
+        if (LocalTime.now().isBefore(time)) {
+            return false;
+        }
+        int window = Math.max(1, plugin.getConfig().getInt("bounty.window-minutes", 90));
+        if (LocalTime.now().isAfter(time.plusMinutes(window))) {
+            lastRun = today;
+            return false;
+        }
+        return isBountyDay(today);
+    }
+
     private boolean shouldWarnNow() {
         LocalDate today = LocalDate.now();
         if (warnedDay != null && warnedDay.equals(today)) {
@@ -102,29 +197,14 @@ public final class BountyManager {
         return true;
     }
 
-    private boolean shouldStartNow() {
-        LocalDate today = LocalDate.now();
-        if (lastRun != null && lastRun.equals(today)) {
-            return false;
+    private static LocalTime parseTime(String raw) {
+        try {
+            return LocalTime.parse(raw.trim());
+        } catch (RuntimeException exception) {
+            return LocalTime.of(19, 0);
         }
-        LocalTime time = parseTime(plugin.getConfig().getString("bounty.time", "19:00"));
-        if (LocalTime.now().isBefore(time)) {
-            return false;
-        }
-        int window = Math.max(1, plugin.getConfig().getInt("bounty.window-minutes", 90));
-        if (LocalTime.now().isAfter(time.plusMinutes(window))) {
-            // Too late for today: do not fire at random hours after a restart.
-            lastRun = today;
-            return false;
-        }
-        DayOfWeek day = today.getDayOfWeek();
-        if (!isBountyDay(today)) {
-            return false;
-        }
-        return true;
     }
 
-    /** Random 3 days per week (ISO week), or the configured list. */
     private boolean isBountyDay(LocalDate today) {
         DayOfWeek day = today.getDayOfWeek();
         if (plugin.getConfig().getBoolean("bounty.random-days", true)) {
@@ -157,197 +237,79 @@ public final class BountyManager {
         return false;
     }
 
-    private static LocalTime parseTime(String raw) {
-        try {
-            return LocalTime.parse(raw.trim());
-        } catch (RuntimeException exception) {
-            return LocalTime.of(19, 0);
-        }
-    }
-
-    /** Picks the leader and starts the hunt. Returns false when nobody is eligible. */
     public boolean start() {
-        if (targetId != null) {
+        if (active) {
             return false;
         }
-        int minHearts = plugin.getConfig().getInt("bounty.min-hearts", 8);
-        boolean skipStaff = plugin.getConfig().getBoolean("bounty.skip-staff", true);
-
-        List<Player> candidates = new ArrayList<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerData data = plugin.store().get(player.getUniqueId());
-            if (data.hearts < minHearts) {
-                continue;
-            }
-            if (plugin.combat().isProtected(player)) {
-                continue;
-            }
-            if (skipStaff && player.hasPermission("galeheart.admin")) {
-                continue;
-            }
-            if (player.getWorld().getName().equals(plugin.getConfig().getString("bounty.arena-world", "arena"))) {
-                continue;
-            }
-            candidates.add(player);
-        }
-        if (candidates.isEmpty()) {
-            return false;
-        }
-        candidates.sort(Comparator.comparingInt((Player p) -> plugin.hearts().hearts(p)).reversed());
-        Player target = candidates.get(0);
-
-        targetId = target.getUniqueId();
-        lastRun = LocalDate.now();
         long minutes = plugin.getConfig().getLong("bounty.duration-minutes", 20);
         endsAt = System.currentTimeMillis() + minutes * 60_000L;
+        active = true;
+        lastRun = LocalDate.now();
+        int multiplier = Math.max(1, plugin.getConfig().getInt("bounty.window-multiplier", 2));
 
-        targetBar = BossBar.bossBar(
-                Msg.parse("<red><bold>BOUNTY<red> — survive for " + minutes + " min"),
-                1.0f, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
-        targetBar.addViewer(target);
-
-        Bukkit.broadcast(Msg.parse(plugin.prefix() + "<red><bold>BOUNTY<red> on <white>" + target.getName()
-                + "<red>! <gray>" + minutes + " minutes. Your compass points at them."));
-        plugin.notifier().send("Bounty",
-                target.getName() + " has a bounty: " + minutes + " minutes, " + plugin.hearts().hearts(target)
-                        + " hearts. Compasses point at them.", 0xE74C3C);
-
+        bar = BossBar.bossBar(Msg.parse("<red><bold>BOUNTY<red> — contracts pay x" + multiplier), 1.0f,
+                BossBar.Color.RED, BossBar.Overlay.PROGRESS);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.equals(target)) {
-                continue;
-            }
-            setCompass(player, target.getLocation());
+            bar.addViewer(player);
         }
+
+        Bukkit.broadcast(Msg.parse(plugin.prefix() + "<red><bold>BOUNTY WINDOW<red> for <white>" + minutes
+                + " min<red>. <gray>Contracts pay <white>x" + multiplier + "<gray>."));
+        plugin.notifier().send("Bounty window",
+                "Contracts pay x" + multiplier + " for " + minutes + " minutes.", 0xE74C3C);
         return true;
     }
 
-    private void setCompass(Player player, Location location) {
-        if (!compassGiven.contains(player.getUniqueId())) {
-            boolean has = false;
-            for (ItemStack stack : player.getInventory().getContents()) {
-                if (stack != null && stack.getType() == Material.COMPASS && isMarked(stack)) {
-                    has = true;
-                    break;
-                }
-            }
-            if (!has) {
-                player.getInventory().addItem(markedCompass());
-            }
-            compassGiven.add(player.getUniqueId());
-        }
-        player.setCompassTarget(location);
-    }
-
-    private ItemStack markedCompass() {
-        ItemStack stack = new ItemStack(Material.COMPASS);
-        stack.editMeta(meta -> {
-            meta.displayName(Msg.parse("<red>Bounty Compass"));
-            meta.getPersistentDataContainer().set(compassKey, PersistentDataType.BYTE, (byte) 1);
-        });
-        return stack;
-    }
-
-    private boolean isMarked(ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        return meta != null && meta.getPersistentDataContainer().has(compassKey, PersistentDataType.BYTE);
-    }
-
-    private void updateCompasses(Player target) {
-        if (target == null) {
-            return;
-        }
-        for (UUID id : compassGiven) {
-            Player player = Bukkit.getPlayer(id);
-            if (player != null && player.isOnline()) {
-                player.setCompassTarget(target.getLocation());
-            }
-        }
-    }
-
-    private void updateBar(Player target) {
-        if (targetBar == null) {
+    private void updateBar() {
+        if (bar == null) {
             return;
         }
         long left = Math.max(0, endsAt - System.currentTimeMillis());
         long minutes = left / 60_000L;
         long seconds = (left % 60_000L) / 1000L;
-        targetBar.name(Msg.parse("<red><bold>BOUNTY<red> — " + minutes + ":" + String.format("%02d", seconds) + " left"));
-        targetBar.progress((float) left / getDurationMillis());
-    }
-
-    private long getDurationMillis() {
-        return Math.max(1, plugin.getConfig().getLong("bounty.duration-minutes", 20) * 60_000L);
-    }
-
-    /** Called from PlayerDeathEvent when the victim is the bounty target. */
-    public boolean handleDeath(Player victim, Player killer) {
-        if (targetId == null || !targetId.equals(victim.getUniqueId())) {
-            return false;
-        }
-        if (killer != null) {
-            int reward = plugin.getConfig().getInt("bounty.reward-hearts", 1);
-            plugin.hearts().add(killer, reward);
-            Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gold>" + killer.getName() + " <gray>claimed the bounty on <white>"
-                    + victim.getName() + "<gray>. <red>+" + reward + " heart"));
-            plugin.notifier().send("Bounty claimed", killer.getName() + " killed " + victim.getName()
-                    + " and took the bounty.", 0xF1C40F);
-        }
-        finish(false, null);
-        return true;
-    }
-
-    public void onQuit(Player player) {
-        if (targetId != null && targetId.equals(player.getUniqueId())) {
-            finish(false, "The bounty target left the server.");
+        bar.name(Msg.parse("<red><bold>BOUNTY<red> — " + minutes + ":" + String.format("%02d", seconds) + " left"));
+        long total = Math.max(1, plugin.getConfig().getLong("bounty.duration-minutes", 20) * 60_000L);
+        bar.progress((float) left / total);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            bar.addViewer(player);
         }
     }
 
-    /** Ends the hunt. rewardSurvivor is used on timeout. */
-    public void finish(boolean rewardSurvivor, String reason) {
-        Player target = targetId == null ? null : Bukkit.getPlayer(targetId);
+    private void removeBar() {
+        if (bar == null) {
+            return;
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            bar.removeViewer(player);
+        }
+        bar = null;
+    }
 
-        if (rewardSurvivor && target != null) {
-            int reward = plugin.getConfig().getInt("bounty.survivor-hearts", 1);
-            plugin.hearts().add(target, reward);
-            plugin.pass().addXp(target, "bounty", 300);
-            Bukkit.broadcast(Msg.parse(plugin.prefix() + "<green>" + target.getName()
-                    + " survived the bounty. <red>+" + reward + " heart"));
-            plugin.notifier().send("Bounty survived", target.getName() + " survived the hunt.", 0x2ECC71);
-        } else if (reason != null) {
-            Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gray>" + reason));
+    public void finish() {
+        if (!active) {
+            removeBar();
+            return;
         }
-
-        if (targetBar != null) {
-            if (target != null) {
-                targetBar.removeViewer(target);
-            }
-            targetBar = null;
-        }
-        for (UUID id : compassGiven) {
-            Player player = Bukkit.getPlayer(id);
-            if (player == null || !player.isOnline()) {
-                continue;
-            }
-            ItemStack[] contents = player.getInventory().getContents();
-            for (int slot = 0; slot < contents.length; slot++) {
-                ItemStack stack = contents[slot];
-                if (stack != null && stack.getType() == Material.COMPASS && isMarked(stack)) {
-                    player.getInventory().setItem(slot, null);
-                }
-            }
-            player.setCompassTarget(player.getWorld().getSpawnLocation());
-        }
-        compassGiven.clear();
-        targetId = null;
-        endsAt = 0L;
+        active = false;
+        removeBar();
+        Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gray>The bounty window is closed. Contracts pay normally again."));
+        plugin.notifier().send("Bounty closed", "The bounty window is over.", 0x95A5A6);
     }
 
     public void cancel() {
-        finish(false, "Bounty cancelled.");
+        active = false;
+        removeBar();
     }
 
-    public String targetName() {
-        Player target = targetId == null ? null : Bukkit.getPlayer(targetId);
-        return target == null ? null : target.getName();
+    public String status() {
+        if (!active) {
+            return "window closed";
+        }
+        long left = Math.max(0, endsAt - System.currentTimeMillis()) / 1000L;
+        return "window open, " + (left / 60) + "m " + (left % 60) + "s left";
+    }
+
+    public UUID targetId(Player player) {
+        return plugin.store().get(player.getUniqueId()).targetId;
     }
 }

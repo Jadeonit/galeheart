@@ -57,7 +57,7 @@ public final class GaleHeartCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 
         GaleCommand executor = new GaleCommand(this);
-        for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "mute", "unmute"}) {
+        for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "grant", "bounty"}) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(executor);

@@ -1,94 +1,135 @@
 # GaleHeart — Discord setup
 
-The bot itself is in `bot/`. This file is the server-side plan: channels,
-roles and what to do before the first event.
+Current state: the Discord bot `GaleHeart Bridge` is connected, DiscordSRV bridges
+`#minecraft-chat`, and the plugins post to `#announcements` and `#events`.
 
 ## 1. Bot application
 
-1. <https://discord.com/developers/applications> → **New Application** → name `GaleHeart`.
-2. **Bot** → **Reset Token** → copy the token (it is shown once).
+1. <https://discord.com/developers/applications> → **New Application** → `GaleHeart`.
+2. **Bot** → **Reset Token** → copy it (shown once).
 3. **OAuth2 → URL Generator**:
-   - scopes: `bot`
-   - permissions: `View Channels`, `Send Messages`, `Embed Links`, `Read Message History`
-   - open the generated URL and pick the server.
+   - scopes: `bot`, `applications.commands`
+   - permissions: View Channels, Send Messages, Embed Links, Attach Files,
+     Read Message History, Add Reactions, Use External Emojis, Manage Webhooks,
+     Manage Messages, Manage Channels
 
-   Raw permissions integer for the URL: `84992`.
+   Raw integer: `537259088`.
 
-4. In the server: **Server Settings → Integrations → GaleHeart** and make sure it
-   can see the events channel.
+```
+https://discord.com/oauth2/authorize?client_id=1573444878065602570&permissions=537259088&integration_type=0&scope=bot+applications.commands
+```
+
+4. Make sure the bot role sits above `@everyone` and can see both announcement
+   channels.
 
 ## 2. Channels
 
-| Channel | Purpose | Who writes |
+| Channel | Type | Purpose |
 |---|---|---|
-| `#announcements` | season dates, wipes, downtime | staff |
-| `#events` | bot output: forecasts, anomalies, finale, quests | bot |
-| `#chat` | general talk | everyone |
-| `#clips` | TikTok/YouTube posts, best moments | everyone |
-| `#support` | questions, reports | everyone |
-| `#rules` | the short version | staff only |
+| `#server-info` | text | rules, IP, version, links |
+| `#announcements` | announcement | season news, weather alerts, donations — published |
+| `#events` | announcement | bounty windows, finale, event log |
+| `#minecraft-chat` | text | DiscordSRV bridge both ways |
+| `#main-chat` | text | general |
+| `#your-suggests` | text | ideas |
+| `#support` | text | donation tickets, reports (create it) |
 
-The bot only needs `#events`.
+`#announcements` works with the bot alone. `#events` currently receives posts
+through its webhook because the bot lacks channel access there; either grant the
+bot `View Channel` + `Send Messages` in `#events` or keep the webhook.
 
-## 3. Roles
+## 3. How the plugins post
 
-| Role | Colour | Key permissions | Who |
-|---|---|---|---|
-| **Owner** | red | Administrator | you |
-| **Admin** | orange | Manage Server, Ban, Kick | 1–2 people |
-| **Moderator** | blue | Kick, Mute, Manage Messages, View Logs | 2–4 people |
-| **Builder** | green | nothing special, `#staff` access | builders |
-| **Content** | purple | `#clips` pinning, `#events` mention ping | video people |
-| **Partner** | teal | own colour, `#partners` | allied servers |
-| **Player** | — | default role after verification | everyone |
-| **Muted** | grey | no send in `#chat` | punished |
+Both `GaleHeartCore` and `AnomalousWeather` share the same notifier with three
+transports, tried in this order:
 
-Hierarchy top to bottom: Owner → Admin → Moderator → Builder → Content → Partner → Player → Muted.
-Discord applies permissions by position, so keep the order.
+1. **Bot token + channel id** — the message is owned by the bot, so the plugin can
+   call `/channels/{id}/messages/{id}/crosspost` and publish it. No Manage Messages
+   needed. This is what produces the "published" flag.
+2. **Channel webhook** — posts as the webhook identity. Looks clean, but the bot
+   cannot publish someone else's message, so followers get no push.
+3. **Local relay** — `http://127.0.0.1:8099/event`, the original bot process. Only
+   used when neither of the above is configured.
 
-## 4. Onboarding
+Core posts to both the bot channel and the webhook when both are set, which is why
+an event shows up in `#announcements` (published) and in `#events` (webhook).
 
-1. `#rules` — 5 lines, not 20.
-2. Verification gate (Wick or AltDentifier) before `Player` is granted:
-   it blocks raid bots and keeps the member count honest.
-3. `#announcements` — pin the season start date and the store link.
-4. Nickname rule: Minecraft name, so people can be found in game.
-
-## 5. Webhook (no hosting, recommended)
-
-1. Channel → **Edit Channel → Integrations → Webhooks → New Webhook**.
-2. **Copy Webhook URL**.
-3. In `plugins/GaleHeartCore/config.yml` and `plugins/AnomalousWeather/config.yml`:
+Config keys:
 
 ```yaml
 discord:
   enabled: true
-  webhook: "https://discord.com/api/webhooks/..."
-  name: "GaleHeart"          # shown as the author
-  avatar: ""                 # public image URL, or leave empty
+  bot-token: ""        # bot token, never commit it
+  channel-id: ""       # bot destination, announcement channel
+  webhook: ""          # optional fallback
+  crosspost: true      # publish after posting
+  name: "GaleHeart"
+  avatar: ""           # public image URL
+  endpoint: "http://127.0.0.1:8099/event"
+  secret: ""
 ```
 
-4. Restart the server and run `/season announce test` in game — the message
-   should appear in the channel within a second.
+The repo keeps these empty on purpose. `deploy_cfg/` (outside the repo) holds the
+real values that get uploaded to the server.
 
-No bot, no token, no process. The webhook posts as its own identity, not as
-your account.
+## 4. What gets posted
 
-## 6. Run the bot (optional)
+| Event | Channel | When |
+|---|---|---|
+| Weather forecast | `#announcements` | one hour before an anomaly |
+| Anomaly started | `#announcements` | on start |
+| Anomaly ended | `#announcements` | on end |
+| Bounty in 10 minutes | both | 10 min before the window |
+| Bounty window | both | on start |
+| Bounty closed | both | on end |
+| Season finale | both | finale start and stop |
+| Season reset | both | after a wipe |
+| Donation | both | `/grant` |
+| Announcement | both | `/season announce <text>` |
 
-Only needed for commands like `/forecast`. Skip it if the webhook is enough.
+## 5. Permissions the bot still wants
 
-## 6. What the bot posts
-
-| Event | When |
+| Permission | Why |
 |---|---|
-| Weather forecast | one hour before an anomaly |
-| Anomaly started | on start |
-| Anomaly ended | on end |
-| Season finale | when the finale starts |
-| Finale over | when hearts are restored |
-| Season reset | after a wipe |
-| Quest complete | when a player unlocks a dimension |
+| Manage Messages | delete other people's messages, publish webhook posts |
+| Manage Channels | DiscordSRV channel topic updater |
+| View Channel + Send Messages in `#events` | post directly instead of webhook |
 
-Events come from the plugins over `http://127.0.0.1:8099/event`; the bot does
-not need to touch Minecraft directly.
+Until then: the DiscordSRV warning about the `#minecraft-chat` topic is cosmetic,
+and four old bridge messages in `#minecraft-chat` cannot be deleted by the bot.
+
+## 6. Roles
+
+| Role | Colour | Key permissions | Who |
+|---|---|---|---|
+| Owner | red | Administrator | you |
+| Admin | orange | Manage Server, Ban, Kick | 1–2 people |
+| Moderator | blue | Kick, Mute, Manage Messages, View Logs | 2–4 people |
+| Builder | green | `#staff` access | builders |
+| Content | purple | `#clips` pinning | video people |
+| Partner | teal | own colour | allied servers |
+| Player | — | default | everyone |
+| Muted | grey | no send in `#chat` | punished |
+
+Order top to bottom: Owner → Admin → Moderator → Builder → Content → Partner →
+Player → Muted.
+
+## 7. Onboarding
+
+1. `#server-info` — IP, version, the three rules, store link.
+2. Verification gate (Wick or AltDentifier) before the Player role: blocks raids.
+3. `#announcements` — pinned season date and store page.
+4. Nickname = Minecraft name.
+
+## 8. Testing
+
+```
+/season announce hello from the console
+/anomaly start acid_rain
+/grant <player> supporter
+```
+
+Each should land in `#announcements` with the published arrow, and the event ones
+also in `#events`. If a message appears but is not published, the bot is posting
+through the webhook path instead of the bot path — check `channel-id`, `bot-token`
+and that the channel is an announcement channel.

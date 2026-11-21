@@ -45,6 +45,7 @@ public final class CoreListener implements Listener {
 
         plugin.hearts().apply(player);
         plugin.quests().grant(player);
+        plugin.bounty().ensureTarget(player);
         plugin.store().write(data);
 
         long left = plugin.combat().protectionLeftMillis(player);
