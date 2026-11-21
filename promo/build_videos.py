@@ -120,9 +120,9 @@ def vertical_video(path):
 
         if t > 8.0:
             alpha = min(1.0, (t - 8.0) / 0.8)
-            draw.text((size[0] // 2, 1140), "d3.rionix.cloud:25039", font=font(30),
+            draw.text((size[0] // 2, 1140), "DISCORD IN BIO", font=font(34),
                       fill=(int(255 * alpha), int(255 * alpha), int(255 * alpha)), anchor="mm")
-            draw.text((size[0] // 2, 1190), "JAVA 1.21.11  ·  EU  ·  60 SLOTS",
+            draw.text((size[0] // 2, 1192), "JAVA 1.21.11  ·  EU",
                       font=font(16, bold=False), fill=(120, 140, 160), anchor="mm")
 
         emit(writer, frame)
@@ -178,7 +178,7 @@ def alert_video(path):
             layer = fade_in(logo, alpha)
             frame.alpha_composite(layer, ((size[0] - layer.width) // 2, 780))
             a = int(255 * min(1.0, alpha))
-            draw.text((size[0] // 2, 1100), "d3.rionix.cloud:25039", font=font(28),
+            draw.text((size[0] // 2, 1100), "DISCORD IN BIO", font=font(30),
                       fill=(a, a, a), anchor="mm")
 
         emit(writer, frame)
@@ -214,7 +214,7 @@ def bounty_video(path):
             draw.text((size[0] // 2, 900), "Three nights a week the payout doubles.", font=font(22, bold=False),
                       fill=(170, 190, 210), anchor="mm")
         if t > 4.8:
-            draw.text((size[0] // 2, 1080), "d3.rionix.cloud:25039", font=font(28),
+            draw.text((size[0] // 2, 1080), "DISCORD IN BIO", font=font(30),
                       fill=(255, 255, 255), anchor="mm")
 
         emit(writer, frame)

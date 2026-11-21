@@ -12,6 +12,9 @@ Everything a player or an admin can type. No teleports anywhere: `/home`, `/tpa`
 | `/bounty` | Your current contract - the player you are hunting |
 | `/top` | Hearts leaderboard, top 10 |
 | `/pass` | Season pass level, XP into the level, shards |
+| `/pass shop` | Cosmetic shop - titles and particle trails, paid in shards |
+| `/pass buy <id>` | Buy an item from the shop |
+| `/pass trail off` | Turn your particle trail off |
 | `/quest` | Quest chains and their progress |
 | `/season` | Season state (finale on or off) |
 
@@ -29,6 +32,7 @@ Permission: `galeheart.admin` (group `admin`).
 |---|---|
 | `/grant <player> <rank>` | Add a LuckPerms group (`supporter`, `patron`, `pass`) and announce it |
 | `/hearts add <player> <n>` | Adjust hearts, negative values subtract |
+| `/pass shards <player> <n>` | Adjust a player's shards (support and refunds) |
 | `/season finale` | Start the one-heart finale |
 | `/season stop` | Stop the finale |
 | `/season reset` | Reset the season counters |

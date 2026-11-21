@@ -89,6 +89,31 @@ pass:
     xp: 40
     victim-cooldown-hours: 1
   rewards: {}
+  shop:
+  - id: title-ember
+    display: <red>Ember
+    cost: 120
+    prefix: '&c[Ember] '
+  - id: title-gale
+    display: <aqua>Gale
+    cost: 150
+    prefix: '&b[Gale] '
+  - id: title-storm
+    display: <dark_purple>Storm
+    cost: 250
+    prefix: '&5[Storm] '
+  - id: trail-heart
+    display: <red>Heart trail
+    cost: 200
+    particle: HEART
+  - id: trail-snow
+    display: <white>Snow trail
+    cost: 200
+    particle: SNOWFLAKE
+  - id: trail-embers
+    display: <gold>Ember trail
+    cost: 300
+    particle: FLAME
 bounty:
   enabled: true
   random-days: true

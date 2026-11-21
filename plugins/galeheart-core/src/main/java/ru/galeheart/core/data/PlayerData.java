@@ -26,6 +26,10 @@ public final class PlayerData {
     public final Map<String, Integer> dailyXp = new HashMap<>();
     public final Map<UUID, Long> killCooldowns = new HashMap<>();
 
+    // Cosmetic shop
+    public final Set<String> owned = new HashSet<>();
+    public String trail = "";
+
     // Bounty contract
     public UUID targetId;
     public String targetName = "";

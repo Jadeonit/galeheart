@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.galeheart.core.GaleHeartCore;
 import ru.galeheart.core.data.PlayerData;
+import ru.galeheart.core.pass.PassManager;
 import ru.galeheart.core.quest.QuestManager;
 import ru.galeheart.core.util.Msg;
 
@@ -200,8 +201,56 @@ public final class GaleCommand implements CommandExecutor {
             return true;
         }
 
+        if (args.length >= 3 && args[0].equalsIgnoreCase("shards")) {
+            if (!sender.hasPermission("galeheart.admin")) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
+                return true;
+            }
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if (target == null) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<red>Player not found."));
+                return true;
+            }
+            PlayerData data = plugin.store().get(target.getUniqueId());
+            data.shards = Math.max(0, data.shards + parse(args[2], 0));
+            plugin.store().write(data);
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Shards of " + target.getName() + ": "
+                    + data.shards));
+            return true;
+        }
+
+        if (args.length >= 2 && args[0].equalsIgnoreCase("buy")) {
+            if (!(sender instanceof Player buyer)) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass buy <id>"));
+                return true;
+            }
+            plugin.pass().buy(buyer, args[1]);
+            return true;
+        }
+
+        if (args.length >= 2 && args[0].equalsIgnoreCase("trail") && args[1].equalsIgnoreCase("off")) {
+            if (!(sender instanceof Player owner)) {
+                sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass trail off"));
+                return true;
+            }
+            plugin.pass().clearTrail(owner);
+            owner.sendMessage(Msg.parse(plugin.prefix() + "<gray>Trail off. Buy another in <white>/pass shop<gray>."));
+            return true;
+        }
+
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass add <player> <xp>"));
+            return true;
+        }
+        if (args.length >= 1 && args[0].equalsIgnoreCase("shop")) {
+            PlayerData data = plugin.store().get(player.getUniqueId());
+            sender.sendMessage(Msg.parse("<gradient:#4FA9C9:#C8324B><bold>Cosmetic shop"));
+            for (PassManager.ShopItem item : plugin.pass().shopItems()) {
+                boolean owned = data.owned.contains(item.id());
+                sender.sendMessage(Msg.parse("<gray>• <white>" + item.id() + " <dark_gray>— " + item.display()
+                        + (owned ? " <green>owned" : " <gold>" + item.cost() + " shards")));
+            }
+            sender.sendMessage(Msg.parse("<dark_gray>/pass buy <id> <dark_gray>· /pass trail off"));
             return true;
         }
         int level = plugin.pass().level(player);

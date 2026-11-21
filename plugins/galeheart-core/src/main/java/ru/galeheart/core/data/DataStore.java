@@ -86,6 +86,12 @@ public final class DataStore {
                 player.dailyXp.put(key, daily.getInt(key));
             }
         }
+        for (String item : section.getStringList("owned")) {
+            if (!item.isBlank()) {
+                player.owned.add(item);
+            }
+        }
+        player.trail = section.getString("trail", "");
 
         ConfigurationSection quests = section.getConfigurationSection("quests");
         if (quests != null) {
@@ -125,6 +131,8 @@ public final class DataStore {
         for (Map.Entry<String, Integer> entry : player.dailyXp.entrySet()) {
             data.set(path + ".daily-xp." + entry.getKey(), entry.getValue());
         }
+        data.set(path + ".owned", new java.util.ArrayList<>(player.owned));
+        data.set(path + ".trail", player.trail);
         data.set(path + ".progress", null);
         for (Map.Entry<String, Integer> entry : player.questProgress.entrySet()) {
             data.set(path + ".progress." + entry.getKey(), entry.getValue());

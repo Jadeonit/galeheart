@@ -1,6 +1,7 @@
 package ru.galeheart.core.pass;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import ru.galeheart.core.GaleHeartCore;
@@ -8,7 +9,10 @@ import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.util.Msg;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 /** Season pass: XP from play and events, cosmetic shards, level rewards. */
@@ -196,5 +200,113 @@ public final class PassManager {
 
     public UUID id(Player player) {
         return player.getUniqueId();
+    }
+
+    // ------------------------------------------------------------ cosmetics
+
+    public record ShopItem(String id, String display, int cost, String prefix, String particle) {
+    }
+
+    public List<ShopItem> shopItems() {
+        List<ShopItem> items = new ArrayList<>();
+        for (Object entry : plugin.getConfig().getMapList("pass.shop")) {
+            if (!(entry instanceof Map<?, ?> raw)) {
+                continue;
+            }
+            Object id = raw.get("id");
+            if (id == null) {
+                continue;
+            }
+            Object cost = raw.get("cost");
+            Object display = raw.get("display");
+            items.add(new ShopItem(
+                    String.valueOf(id),
+                    display == null ? String.valueOf(id) : String.valueOf(display),
+                    cost instanceof Number number ? number.intValue() : 100,
+                    raw.get("prefix") == null ? "" : String.valueOf(raw.get("prefix")),
+                    raw.get("particle") == null ? "" : String.valueOf(raw.get("particle"))));
+        }
+        return items;
+    }
+
+    public ShopItem shopItem(String id) {
+        for (ShopItem item : shopItems()) {
+            if (item.id().equalsIgnoreCase(id)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /** Spends shards on a cosmetic. Returns false and explains why when it fails. */
+    public boolean buy(Player player, String id) {
+        ShopItem item = shopItem(id);
+        if (item == null) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>Unknown item. <white>/pass shop"));
+            return false;
+        }
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (data.owned.contains(item.id())) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>You already own <white>" + item.display() + "<gray>."));
+            return false;
+        }
+        if (data.shards < item.cost()) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<red>Not enough shards. <gray>Need <white>"
+                    + item.cost() + "<gray>, you have <white>" + data.shards + "<gray>."));
+            return false;
+        }
+        data.shards -= item.cost();
+        data.owned.add(item.id());
+        if (!item.prefix().isBlank()) {
+            applyPrefix(player, item.prefix());
+        }
+        if (!item.particle().isBlank()) {
+            data.trail = item.id();
+        }
+        plugin.store().write(data);
+        player.sendMessage(Msg.parse(plugin.prefix() + "<green>Unlocked <white>" + item.display()
+                + "<green>. <gray>-" + item.cost() + " shards"));
+        return true;
+    }
+
+    private void applyPrefix(Player player, String prefix) {
+        String command = "lp user " + player.getName() + " meta setprefix 100 \"" + prefix + "\"";
+        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+    }
+
+    /** Turns the particle trail off without losing the purchase. */
+    public void clearTrail(Player player) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        data.trail = "";
+        plugin.store().write(data);
+    }
+
+    public String trail(Player player) {
+        return plugin.store().get(player.getUniqueId()).trail;
+    }
+
+    /** Called twice a second: renders the equipped trail. */
+    public void trailTick() {
+        if (!enabled()) {
+            return;
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            PlayerData data = plugin.store().get(player.getUniqueId());
+            if (data.trail == null || data.trail.isBlank() || !data.owned.contains(data.trail)) {
+                continue;
+            }
+            ShopItem item = shopItem(data.trail);
+            if (item == null || item.particle().isBlank()) {
+                continue;
+            }
+            Particle particle;
+            try {
+                particle = Particle.valueOf(item.particle().toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException unknownParticle) {
+                continue;
+            }
+            player.getWorld().spawnParticle(particle,
+                    player.getLocation().add(0, 0.15, 0), 3, 0.25, 0.05, 0.25);
+        }
     }
 }
