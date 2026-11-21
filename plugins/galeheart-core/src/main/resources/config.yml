@@ -45,6 +45,7 @@ quests:
     - COLLECT_ITEM:ENDER_PEARL:16
 starter-kit:
   enabled: true
+  book: true
   items:
   - STONE_SWORD:1
   - STONE_PICKAXE:1
