@@ -121,7 +121,7 @@ pass:
     particle: FLAME
     icon: BLAZE_POWDER
 bounty:
-  enabled: true
+  enabled: false
   random-days: true
   days-per-week: 3
   days:

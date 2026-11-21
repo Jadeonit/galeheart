@@ -1,12 +1,26 @@
 # Opening post — copy-paste
 
-Fill the date and time, everything else is ready. Post the image first
-(`promo/poster.png`), then the text.
+Launch: **Friday, December 4, 19:00 CET (18:00 UTC)**.
+
+## Runway
+
+| Date | What |
+|---|---|
+| Nov 24 (Tue) | Teaser post + `vertical.mp4` on TikTok, start warming the account |
+| Nov 27 (Fri) | `alert.mp4`, first Discord self-promo round, Reddit |
+| Nov 30 (Mon) | `bounty.mp4`, second round, listings (PMC, TopG, server lists) |
+| Dec 2 (Wed) | "two days" reminder in your Discord, story post |
+| Dec 3 (Thu) | Soft launch for friends: whitelist off 20:00 CET, bug sweep, whitelist back on |
+| Dec 4 (Fri) | Whitelist off 18:45 CET, open 19:00 CET, first bounty window 21:00 CET |
+
+The world is whitelisted until launch day, so nobody gets a head start.
+
+Post the image first (`promo/poster.png`), then the text.
 
 ## 1. Self-promotion post (main one)
 
 ```
-**GaleHeart — Season 1: Acid Sky** · opening [DATE]
+**GaleHeart — Season 1: Acid Sky** · opening December 4
 
 Most SMPs hand you a safe spawn, a /home and a warm welcome.
 Here you get ten hearts, a stone sword, and a weather report that reads like a death sentence.
@@ -28,7 +42,7 @@ Discord: https://discord.gg/g9XANw8Wa
 ## 2. Short version (strict channels, feeds)
 
 ```
-**GaleHeart — Season 1: Acid Sky** · opening [DATE]
+**GaleHeart — Season 1: Acid Sky** · opening December 4
 
 Lifesteal SMP where the sky is hostile. No teleports, personal bounty contracts, sealed Nether and End, cosmetics-only season pass.
 
@@ -59,7 +73,7 @@ Offline mode, so any launcher works. Whitelist off. Season 1 just started.
 ## 5. Discord announcement (your own server)
 
 ```
-**GaleHeart opens [DATE] at [TIME] UTC**
+**GaleHeart opens December 4 at 19:00 CET (18:00 UTC)**
 Season 1: Acid Sky · Java 1.21.11 · EU
 
 A lifesteal SMP where the sky is hostile.
