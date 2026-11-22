@@ -1,5 +1,8 @@
 # Content calendar — Nov 22 to Dec 4
 
+> Files ready to upload, numbered by day: promo/upload/. Captions and hashtags: promo/upload/CAPTIONS.md.
+
+
 One post per day, one platform per day, no spam. TikTok/Reels/Shorts get the same
 file; upload natively to each, never with a watermark from another app.
 
