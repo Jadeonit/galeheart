@@ -89,8 +89,11 @@ public final class LockerGui implements InventoryHolder, Listener {
         infoLore.add("<gray>Shards <aqua>" + data.shards);
         infoLore.add("<gray>Pass level <white>" + pass.level(player) + "<gray>/" + pass.maxLevel());
         infoLore.add("");
-        infoLore.add("<gray>Click owned item to equip");
-        infoLore.add("<gray>Click equipped item to remove");
+        infoLore.add("<aqua>Titles <dark_gray>- prefix before your name");
+        infoLore.add("<gold>Trails <dark_gray>- particles that follow you");
+        infoLore.add("<light_purple>Join effects <dark_gray>- a burst when you log in");
+        infoLore.add("");
+        infoLore.add("<gray>Click owned to equip, click equipped to remove");
         inventory.setItem(INFO, Gui.icon(Material.BOOK, "<white><bold>Locker", infoLore));
         inventory.setItem(CLOSE, Gui.icon(Material.BARRIER, "<red>Back", List.of("<gray>To the pass menu")));
 

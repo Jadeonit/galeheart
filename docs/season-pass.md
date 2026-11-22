@@ -22,7 +22,7 @@ A chest menu, not a wall of chat lines.
 | Player kills | 40 per kill, once per victim per hour | 200 |
 | Quest step | 150 | 300 |
 
-Level cost: `90 + 6 × (level - 1)`. Total to 100 is 38,700 XP, roughly 48 capped
+Level cost: `90 + 6 × (level - 1)`. Total to 100 is 38,016 XP, roughly 48 capped
 days — a full season for a daily player, level 30–50 for a casual one.
 
 Every level pays 4 shards. Levels 5 / 10 / 20 / 30 / 40 / 50 / 60 / 70 / 85 / 100

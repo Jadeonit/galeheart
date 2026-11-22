@@ -133,7 +133,7 @@ Then open the server to players and watch `latest.log` for the first hour.
 
 ## Night 2 — pass rework (Nov 21 → 22)
 
-- Season pass rebuilt: 100 levels, XP curve `90 + 6 × (level - 1)`, total 38,700.
+- Season pass rebuilt: 100 levels, XP curve `90 + 6 × (level - 1)`, total 38,016.
   Every level pays 4 shards, ten levels unlock a cosmetic outright.
 - Locker added (`/locker`): three labelled tabs — titles, trails, join effects —
   with 22 items, buy / equip / remove, pagination, glow on owned, level locks.

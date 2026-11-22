@@ -31,7 +31,9 @@ public final class StarterKit {
 
             "<dark_red><bold>Commands\n<reset><black>/hearts  - your hearts\n"
                     + "/bounty  - your contract\n"
-                    + "/pass  - season pass menu\n"
+                    + "/pass  - season pass\n"
+                    + "/locker  - titles and trails\n"
+                    + "/achievements  - goals, shards\n"
                     + "/quest  - Nether and End chains\n"
                     + "/top  - leaderboard\n\n"
                     + "Good luck. Trust nobody."
