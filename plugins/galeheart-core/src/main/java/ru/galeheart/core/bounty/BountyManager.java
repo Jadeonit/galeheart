@@ -111,6 +111,7 @@ public final class BountyManager {
         }
         Bukkit.broadcast(Msg.parse(plugin.prefix() + "<gold>" + killer.getName() + "<gray> completed the contract on <white>"
                 + victim.getName() + "<gray>. <red>+" + reward + " heart"));
+        plugin.achievements().increment(killer, ru.galeheart.core.achievement.AchievementManager.Counter.BOUNTY, 1);
         assign(killer);
         String next = targetName(killer);
         if (next != null) {

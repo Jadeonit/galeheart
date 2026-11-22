@@ -174,6 +174,7 @@ public final class QuestManager {
                     + quest.display() + "<gray>."));
             plugin.notifier().send("Quest complete", player.getName() + " finished " + quest.id()
                     + ". The gate is open for them.", 0xF1C40F);
+            plugin.achievements().check(player);
         }
     }
 

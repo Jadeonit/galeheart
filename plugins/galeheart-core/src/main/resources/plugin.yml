@@ -19,8 +19,17 @@ commands:
     usage: /season
     aliases: [ s ]
   pass:
-    description: Season pass progress
+    description: Season pass menu
     usage: /pass
+    aliases: [ bp, battlepass ]
+  locker:
+    description: Cosmetics - titles, trails, join effects
+    usage: /locker
+    aliases: [ cosmetics, wardrobe ]
+  achievements:
+    description: Achievement board
+    usage: /achievements
+    aliases: [ ach, advancements ]
   grant:
     description: Grant a donation rank
     usage: /grant <player> <rank>

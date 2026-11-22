@@ -73,54 +73,195 @@ chat:
   - buy now
 pass:
   enabled: true
-  levels: 30
-  xp-base: 500
-  xp-step: 20
+  levels: 100
+  xp-base: 90
+  xp-step: 6
   daily-caps:
     vanilla-xp: 300
     playtime: 300
     kills: 200
+    quest: 300
   shards:
     per-vanilla-xp: 20
-    daily-cap: 40
-    per-level: 20
+    daily-cap: 60
+    per-level: 4
   playtime:
-    xp-per-hour: 60
+    xp-per-hour: 90
   kills:
     xp: 40
     victim-cooldown-hours: 1
   rewards: {}
-  shop:
-  - id: title-ember
-    display: <red>Ember
+  level-rewards:
+    '5': join-sparks
+    '10': trail-heart
+    '20': gale
+    '30': trail-snow
+    '40': storm
+    '50': trail-soul
+    '60': join-portal
+    '70': acid
+    '85': trail-void
+    '100': acidking
+  cosmetics:
+  - type: TITLE
+    id: scout
+    display: <gray>Scout
+    cost: 80
+    unlock-level: 1
+    prefix: '&7[Scout] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: wanderer
+    display: <white>Wanderer
     cost: 120
+    unlock-level: 5
+    prefix: '&f[Wanderer] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: ember
+    display: <red>Ember
+    cost: 160
+    unlock-level: 10
     prefix: '&c[Ember] '
     icon: NAME_TAG
-  - id: title-gale
+  - type: TITLE
+    id: gale
     display: <aqua>Gale
-    cost: 150
+    cost: 200
+    unlock-level: 20
     prefix: '&b[Gale] '
     icon: NAME_TAG
-  - id: title-storm
+  - type: TITLE
+    id: frost
+    display: <blue>Frost
+    cost: 240
+    unlock-level: 30
+    prefix: '&9[Frost] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: storm
     display: <dark_purple>Storm
-    cost: 250
+    cost: 300
+    unlock-level: 40
     prefix: '&5[Storm] '
     icon: NAME_TAG
-  - id: trail-heart
+  - type: TITLE
+    id: void
+    display: <dark_gray>Void
+    cost: 360
+    unlock-level: 55
+    prefix: '&8[Void] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: acid
+    display: <green>Acid
+    cost: 420
+    unlock-level: 70
+    prefix: '&a[Acid] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: warden
+    display: <gold>Warden
+    cost: 500
+    unlock-level: 85
+    prefix: '&6[Warden] '
+    icon: NAME_TAG
+  - type: TITLE
+    id: acidking
+    display: <dark_red>Acid King
+    cost: 0
+    unlock-level: 100
+    prefix: '&4&l[ACID KING] '
+    icon: NETHERITE_SWORD
+  - type: TRAIL
+    id: trail-heart
     display: <red>Heart trail
     cost: 200
+    unlock-level: 10
     particle: HEART
     icon: MAGMA_CREAM
-  - id: trail-snow
+  - type: TRAIL
+    id: trail-snow
     display: <white>Snow trail
     cost: 200
+    unlock-level: 15
     particle: SNOWFLAKE
     icon: SNOWBALL
-  - id: trail-embers
+  - type: TRAIL
+    id: trail-ember
     display: <gold>Ember trail
-    cost: 300
+    cost: 260
+    unlock-level: 25
     particle: FLAME
     icon: BLAZE_POWDER
+  - type: TRAIL
+    id: trail-spark
+    display: <aqua>Spark trail
+    cost: 320
+    unlock-level: 35
+    particle: END_ROD
+    icon: END_ROD
+  - type: TRAIL
+    id: trail-soul
+    display: <blue>Soul trail
+    cost: 380
+    unlock-level: 50
+    particle: SOUL_FIRE_FLAME
+    icon: SOUL_TORCH
+  - type: TRAIL
+    id: trail-aura
+    display: <light_purple>Aura trail
+    cost: 460
+    unlock-level: 65
+    particle: ENCHANT
+    icon: ENCHANTED_BOOK
+  - type: TRAIL
+    id: trail-void
+    display: <dark_purple>Void trail
+    cost: 540
+    unlock-level: 80
+    particle: PORTAL
+    icon: ENDER_PEARL
+  - type: JOIN
+    id: join-sparks
+    display: <yellow>Sparks
+    cost: 150
+    unlock-level: 5
+    particle: FIREWORK
+    sound: ENTITY_FIREWORK_ROCKET_BLAST
+    icon: FIREWORK_ROCKET
+  - type: JOIN
+    id: join-hearts
+    display: <red>Hearts
+    cost: 250
+    unlock-level: 25
+    particle: HEART
+    sound: BLOCK_NOTE_BLOCK_HARP
+    icon: POPPY
+  - type: JOIN
+    id: join-snow
+    display: <white>Snowfall
+    cost: 300
+    unlock-level: 40
+    particle: SNOWFLAKE
+    sound: BLOCK_POWDER_SNOW_PLACE
+    icon: POWDER_SNOW_BUCKET
+  - type: JOIN
+    id: join-portal
+    display: <dark_purple>Portal
+    cost: 400
+    unlock-level: 60
+    particle: PORTAL
+    sound: ENTITY_ENDERMAN_TELEPORT
+    icon: ENDER_EYE
+  - type: JOIN
+    id: join-thunder
+    display: <aqua>Thunder
+    cost: 500
+    unlock-level: 75
+    particle: ELECTRIC_SPARK
+    sound: ENTITY_LIGHTNING_BOLT_THUNDER
+    icon: LIGHTNING_ROD
 bounty:
   enabled: false
   random-days: true
@@ -144,3 +285,146 @@ discord:
   bot-token: ''
   channel-id: ''
   crosspost: true
+achievements:
+  enabled: true
+  list:
+  - id: first-blood
+    display: First Blood
+    description: Kill another player
+    icon: IRON_SWORD
+    shards: 50
+    trigger: KILLS
+    amount: 1
+  - id: hunter
+    display: Hunter
+    description: Kill 10 players
+    icon: DIAMOND_SWORD
+    shards: 150
+    trigger: KILLS
+    amount: 10
+  - id: warlord
+    display: Warlord
+    description: Kill 50 players
+    icon: NETHERITE_SWORD
+    shards: 500
+    trigger: KILLS
+    amount: 50
+  - id: first-death
+    display: Welcome to Hell
+    description: Die once
+    icon: SKELETON_SKULL
+    shards: 25
+    trigger: DEATHS
+    amount: 1
+  - id: survivor
+    display: Survivor
+    description: Play 10 hours
+    icon: CLOCK
+    shards: 100
+    trigger: MINUTES
+    amount: 600
+  - id: veteran
+    display: Veteran
+    description: Play 50 hours
+    icon: COMPASS
+    shards: 300
+    trigger: MINUTES
+    amount: 3000
+  - id: miner
+    display: Miner
+    description: Mine 1,000 blocks
+    icon: IRON_PICKAXE
+    shards: 75
+    trigger: BLOCKS
+    amount: 1000
+  - id: deep-diver
+    display: Deep Diver
+    description: Mine 10,000 blocks
+    icon: DIAMOND_PICKAXE
+    shards: 250
+    trigger: BLOCKS
+    amount: 10000
+  - id: diamond-hands
+    display: Diamond Hands
+    description: Mine 32 diamonds
+    icon: DIAMOND
+    shards: 150
+    trigger: DIAMONDS
+    amount: 32
+  - id: monster-slayer
+    display: Monster Slayer
+    description: Kill 250 mobs
+    icon: ZOMBIE_HEAD
+    shards: 120
+    trigger: MOBS
+    amount: 250
+  - id: heart-collector
+    display: Heart Collector
+    description: Reach 15 hearts
+    icon: RED_DYE
+    shards: 100
+    trigger: HEARTS
+    amount: 15
+  - id: heart-lord
+    display: Heart Lord
+    description: Reach 20 hearts
+    icon: NETHER_STAR
+    shards: 300
+    trigger: HEARTS
+    amount: 20
+  - id: bounty-hunter
+    display: Bounty Hunter
+    description: Complete 5 contracts
+    icon: COMPASS
+    shards: 200
+    trigger: BOUNTY
+    amount: 5
+  - id: pass-25
+    display: Season Regular
+    description: Reach pass level 25
+    icon: EXPERIENCE_BOTTLE
+    shards: 100
+    trigger: PASS_LEVEL
+    amount: 25
+  - id: pass-50
+    display: Season Grinder
+    description: Reach pass level 50
+    icon: EXPERIENCE_BOTTLE
+    shards: 200
+    trigger: PASS_LEVEL
+    amount: 50
+  - id: pass-100
+    display: Season Legend
+    description: Reach pass level 100
+    icon: BEACON
+    shards: 500
+    trigger: PASS_LEVEL
+    amount: 100
+  - id: spender
+    display: Big Spender
+    description: Spend 500 shards
+    icon: GOLD_INGOT
+    shards: 100
+    trigger: SHARDS_SPENT
+    amount: 500
+  - id: collector
+    display: Collector
+    description: Earn 1,000 shards
+    icon: EMERALD
+    shards: 150
+    trigger: SHARDS_EARNED
+    amount: 1000
+  - id: quest-nether
+    display: Through the Gate
+    description: Complete a quest chain
+    icon: OBSIDIAN
+    shards: 150
+    trigger: QUESTS
+    amount: 1
+  - id: quest-both
+    display: Two Gates
+    description: Complete both quest chains
+    icon: CRYING_OBSIDIAN
+    shards: 250
+    trigger: QUESTS
+    amount: 2

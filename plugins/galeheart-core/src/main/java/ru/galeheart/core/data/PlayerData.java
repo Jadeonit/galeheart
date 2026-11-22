@@ -29,6 +29,20 @@ public final class PlayerData {
     // Cosmetic shop
     public final Set<String> owned = new HashSet<>();
     public String trail = "";
+    public String title = "";
+    public String joinEffect = "";
+
+    // Lifetime counters, used by achievements
+    public int kills;
+    public int deaths;
+    public int blocksMined;
+    public int diamondsMined;
+    public int mobsKilled;
+    public int playMinutes;
+    public int bountyDone;
+    public int lifetimeShards;
+    public int shardsSpent;
+    public final Set<String> achievements = new HashSet<>();
 
     // Bounty contract
     public UUID targetId;

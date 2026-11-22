@@ -2,6 +2,7 @@ package ru.galeheart.core.pass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import ru.galeheart.core.GaleHeartCore;
@@ -13,9 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
-/** Season pass: XP from play and events, cosmetic shards, level rewards. */
+/** Season pass: XP, shards, level rewards and the cosmetic catalogue. */
 public final class PassManager {
 
     private final GaleHeartCore plugin;
@@ -29,19 +29,27 @@ public final class PassManager {
     }
 
     public int maxLevel() {
-        return Math.max(1, plugin.getConfig().getInt("pass.levels", 30));
+        return Math.max(1, plugin.getConfig().getInt("pass.levels", 100));
     }
 
     private int xpBase() {
-        return Math.max(1, plugin.getConfig().getInt("pass.xp-base", 500));
+        return Math.max(1, plugin.getConfig().getInt("pass.xp-base", 90));
     }
 
     private int xpStep() {
-        return Math.max(0, plugin.getConfig().getInt("pass.xp-step", 20));
+        return Math.max(0, plugin.getConfig().getInt("pass.xp-step", 6));
     }
 
     public int costForLevel(int level) {
         return xpBase() + xpStep() * (level - 1);
+    }
+
+    public int totalXpForLevel(int level) {
+        int total = 0;
+        for (int index = 1; index < level; index++) {
+            total += costForLevel(index);
+        }
+        return total;
     }
 
     public int levelOf(int totalXp) {
@@ -77,6 +85,7 @@ public final class PassManager {
         if (!today.equals(data.passDay)) {
             data.passDay = today;
             data.dailyXp.clear();
+            data.dailyShards = 0;
         }
     }
 
@@ -124,25 +133,61 @@ public final class PassManager {
 
         PlayerData data = plugin.store().get(player.getUniqueId());
         int per = Math.max(1, plugin.getConfig().getInt("pass.shards.per-vanilla-xp", 20));
-        int cap = Math.max(0, plugin.getConfig().getInt("pass.shards.daily-cap", 40));
-        int earned = data.dailyShards;
-        int add = Math.min(delta / per, Math.max(0, cap - earned));
+        int cap = Math.max(0, plugin.getConfig().getInt("pass.shards.daily-cap", 60));
+        int add = Math.min(delta / per, Math.max(0, cap - data.dailyShards));
         if (add > 0) {
             data.dailyShards += add;
             data.shards += add;
+            data.lifetimeShards += add;
             plugin.store().write(data);
+            plugin.achievements().check(player);
         }
     }
 
     private void onLevelUp(Player player, PlayerData data, int from, int to) {
-        int perLevel = Math.max(0, plugin.getConfig().getInt("pass.shards.per-level", 20));
+        int perLevel = Math.max(0, plugin.getConfig().getInt("pass.shards.per-level", 4));
         for (int level = from + 1; level <= to; level++) {
             data.shards += perLevel;
+            data.lifetimeShards += perLevel;
             player.sendMessage(Msg.parse(plugin.prefix() + "<gold>Pass level <white>" + level
                     + "<gold>! <gray>+" + perLevel + " shards"));
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.4f);
+            grantLevelReward(player, level);
             runRewards(player, level);
         }
         plugin.store().write(data);
+        plugin.achievements().check(player);
+    }
+
+    private void grantLevelReward(Player player, int level) {
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("pass.level-rewards");
+        if (section == null) {
+            return;
+        }
+        for (String key : section.getKeys(false)) {
+            int rewardLevel;
+            try {
+                rewardLevel = Integer.parseInt(key.trim());
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            if (rewardLevel != level) {
+                continue;
+            }
+            Cosmetic cosmetic = cosmetic(section.getString(key, ""));
+            if (cosmetic == null) {
+                continue;
+            }
+            PlayerData data = plugin.store().get(player.getUniqueId());
+            if (data.owned.contains(cosmetic.id())) {
+                continue;
+            }
+            data.owned.add(cosmetic.id());
+            plugin.store().write(data);
+            player.sendMessage(Msg.parse(plugin.prefix() + "<green>Unlocked <white>" + cosmetic.display()
+                    + " <dark_gray>(" + cosmetic.type().label() + ") <gray>— see <white>/locker"));
+            player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 1.2f);
+        }
     }
 
     private void runRewards(Player player, int level) {
@@ -154,18 +199,20 @@ public final class PassManager {
         }
     }
 
-    /** Called once a minute: 60 XP per hour of play. */
+    /** Called once a minute: XP for playtime and the playtime achievement counter. */
     public void tickPlaytime() {
         if (!enabled()) {
             return;
         }
-        int perHour = Math.max(0, plugin.getConfig().getInt("pass.playtime.xp-per-hour", 60));
+        int perHour = Math.max(0, plugin.getConfig().getInt("pass.playtime.xp-per-hour", 90));
         int perMinute = Math.max(0, perHour / 60);
-        if (perMinute <= 0) {
-            return;
-        }
         for (Player player : Bukkit.getOnlinePlayers()) {
-            addXp(player, "playtime", perMinute);
+            PlayerData data = plugin.store().get(player.getUniqueId());
+            data.playMinutes += 1;
+            if (perMinute > 0) {
+                addXp(player, "playtime", perMinute);
+            }
+            plugin.achievements().check(player);
         }
     }
 
@@ -198,18 +245,11 @@ public final class PassManager {
         return plugin.store().get(player.getUniqueId()).passXp;
     }
 
-    public UUID id(Player player) {
-        return player.getUniqueId();
-    }
+    // ------------------------------------------------------------ catalogue
 
-    // ------------------------------------------------------------ cosmetics
-
-    public record ShopItem(String id, String display, int cost, String prefix, String particle, String icon) {
-    }
-
-    public List<ShopItem> shopItems() {
-        List<ShopItem> items = new ArrayList<>();
-        for (Object entry : plugin.getConfig().getMapList("pass.shop")) {
+    public List<Cosmetic> cosmetics() {
+        List<Cosmetic> list = new ArrayList<>();
+        for (Object entry : plugin.getConfig().getMapList("pass.cosmetics")) {
             if (!(entry instanceof Map<?, ?> raw)) {
                 continue;
             }
@@ -217,83 +257,160 @@ public final class PassManager {
             if (id == null) {
                 continue;
             }
-            Object cost = raw.get("cost");
             Object display = raw.get("display");
-            items.add(new ShopItem(
+            Object cost = raw.get("cost");
+            Object unlock = raw.get("unlock-level");
+            Cosmetic.Type type = Cosmetic.Type.parse(raw.get("type") == null ? null : String.valueOf(raw.get("type")));
+            list.add(new Cosmetic(
+                    type,
                     String.valueOf(id),
                     display == null ? String.valueOf(id) : String.valueOf(display),
-                    cost instanceof Number number ? number.intValue() : 100,
+                    cost instanceof Number number ? number.intValue() : 0,
+                    unlock instanceof Number level ? level.intValue() : 1,
                     raw.get("prefix") == null ? "" : String.valueOf(raw.get("prefix")),
                     raw.get("particle") == null ? "" : String.valueOf(raw.get("particle")),
-                    raw.get("icon") == null ? "PAPER" : String.valueOf(raw.get("icon"))));
+                    raw.get("sound") == null ? "" : String.valueOf(raw.get("sound")),
+                    raw.get("icon") == null ? type.defaultIcon() : String.valueOf(raw.get("icon"))));
         }
-        return items;
+        return list;
     }
 
-    public ShopItem shopItem(String id) {
-        for (ShopItem item : shopItems()) {
-            if (item.id().equalsIgnoreCase(id)) {
-                return item;
+    public List<Cosmetic> cosmetics(Cosmetic.Type type) {
+        List<Cosmetic> list = new ArrayList<>();
+        for (Cosmetic cosmetic : cosmetics()) {
+            if (cosmetic.type() == type) {
+                list.add(cosmetic);
+            }
+        }
+        return list;
+    }
+
+    public Cosmetic cosmetic(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        for (Cosmetic cosmetic : cosmetics()) {
+            if (cosmetic.id().equalsIgnoreCase(id)) {
+                return cosmetic;
             }
         }
         return null;
     }
 
-    /** Spends shards on a cosmetic. Returns false and explains why when it fails. */
+    public boolean owns(Player player, String id) {
+        return plugin.store().get(player.getUniqueId()).owned.contains(id);
+    }
+
+    /** Buys a cosmetic with shards. Returns false and explains when it fails. */
     public boolean buy(Player player, String id) {
-        ShopItem item = shopItem(id);
-        if (item == null) {
-            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>Unknown item. <white>/pass shop"));
+        Cosmetic cosmetic = cosmetic(id);
+        if (cosmetic == null) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>Unknown cosmetic. <white>/locker"));
             return false;
         }
         PlayerData data = plugin.store().get(player.getUniqueId());
-        if (data.owned.contains(item.id())) {
-            player.sendMessage(Msg.parse(plugin.prefix() + "<gray>You already own <white>" + item.display() + "<gray>."));
+        if (data.owned.contains(id)) {
+            equip(player, id);
             return false;
         }
-        if (data.shards < item.cost()) {
+        int level = levelOf(data.passXp);
+        if (level < cosmetic.unlockLevel()) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<red>Locked. <gray>Needs pass level <white>"
+                    + cosmetic.unlockLevel() + "<gray>."));
+            return false;
+        }
+        if (data.shards < cosmetic.cost()) {
             player.sendMessage(Msg.parse(plugin.prefix() + "<red>Not enough shards. <gray>Need <white>"
-                    + item.cost() + "<gray>, you have <white>" + data.shards + "<gray>."));
+                    + cosmetic.cost() + "<gray>, you have <white>" + data.shards + "<gray>."));
             return false;
         }
-        data.shards -= item.cost();
-        data.owned.add(item.id());
-        if (!item.prefix().isBlank()) {
-            applyPrefix(player, item.prefix());
-        }
-        if (!item.particle().isBlank()) {
-            data.trail = item.id();
-        }
+        data.shards -= cosmetic.cost();
+        data.shardsSpent += cosmetic.cost();
+        data.owned.add(id);
         plugin.store().write(data);
-        player.sendMessage(Msg.parse(plugin.prefix() + "<green>Unlocked <white>" + item.display()
-                + "<green>. <gray>-" + item.cost() + " shards"));
+        player.sendMessage(Msg.parse(plugin.prefix() + "<green>Unlocked <white>" + cosmetic.display()
+                + "<green>. <gray>-" + cosmetic.cost() + " shards"));
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.6f);
+        equip(player, id);
+        plugin.achievements().check(player);
         return true;
     }
 
-    private void applyPrefix(Player player, String prefix) {
-        String command = "lp user " + player.getName() + " meta setprefix 100 \"" + prefix + "\"";
-        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-    }
-
-    /** Turns the particle trail off without losing the purchase. */
-    public void clearTrail(Player player) {
-        PlayerData data = plugin.store().get(player.getUniqueId());
-        data.trail = "";
-        plugin.store().write(data);
-    }
-
-    public String trail(Player player) {
-        return plugin.store().get(player.getUniqueId()).trail;
-    }
-
-    /** Equips an already owned trail. */
-    public void equipTrail(Player player, String id) {
+    /** Equips an owned cosmetic, replacing whatever was equipped in that slot. */
+    public void equip(Player player, String id) {
+        Cosmetic cosmetic = cosmetic(id);
+        if (cosmetic == null) {
+            return;
+        }
         PlayerData data = plugin.store().get(player.getUniqueId());
         if (!data.owned.contains(id)) {
             return;
         }
-        data.trail = id;
+        switch (cosmetic.type()) {
+            case TITLE -> {
+                data.title = id;
+                applyPrefix(player, cosmetic.prefix());
+            }
+            case TRAIL -> data.trail = id;
+            case JOIN -> data.joinEffect = id;
+        }
         plugin.store().write(data);
+        player.sendMessage(Msg.parse(plugin.prefix() + "<green>Equipped <white>" + cosmetic.display()));
+        player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_LEATHER, 0.7f, 1.3f);
+    }
+
+    /** Removes whatever is equipped in a category. */
+    public void unequip(Player player, Cosmetic.Type type) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        switch (type) {
+            case TITLE -> {
+                data.title = "";
+                removePrefix(player);
+            }
+            case TRAIL -> data.trail = "";
+            case JOIN -> data.joinEffect = "";
+        }
+        plugin.store().write(data);
+        player.sendMessage(Msg.parse(plugin.prefix() + "<gray>Removed " + type.label().toLowerCase(Locale.ROOT) + "."));
+    }
+
+    public String equipped(Player player, Cosmetic.Type type) {
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        return switch (type) {
+            case TITLE -> data.title == null ? "" : data.title;
+            case TRAIL -> data.trail == null ? "" : data.trail;
+            case JOIN -> data.joinEffect == null ? "" : data.joinEffect;
+        };
+    }
+
+    private void applyPrefix(Player player, String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            return;
+        }
+        String command = "lp user " + player.getName() + " meta setprefix 100 \"" + prefix + "\"";
+        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+    }
+
+    private void removePrefix(Player player) {
+        String command = "lp user " + player.getName() + " meta removeprefix 100";
+        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+    }
+
+    /** Fires the equipped join effect once. */
+    public void playJoinEffect(Player player) {
+        Cosmetic cosmetic = cosmetic(plugin.store().get(player.getUniqueId()).joinEffect);
+        if (cosmetic == null || cosmetic.particle().isBlank()) {
+            return;
+        }
+        Particle particle = particle(cosmetic.particle());
+        if (particle == null) {
+            return;
+        }
+        player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1.0, 0), 40, 0.6, 0.9, 0.6, 0.05);
+        Sound sound = sound(cosmetic.sound());
+        if (sound != null) {
+            player.getWorld().playSound(player.getLocation(), sound, 0.7f, 1.2f);
+        }
     }
 
     /** Called twice a second: renders the equipped trail. */
@@ -306,18 +423,37 @@ public final class PassManager {
             if (data.trail == null || data.trail.isBlank() || !data.owned.contains(data.trail)) {
                 continue;
             }
-            ShopItem item = shopItem(data.trail);
-            if (item == null || item.particle().isBlank()) {
+            Cosmetic cosmetic = cosmetic(data.trail);
+            if (cosmetic == null || cosmetic.particle().isBlank()) {
                 continue;
             }
-            Particle particle;
-            try {
-                particle = Particle.valueOf(item.particle().toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException unknownParticle) {
+            Particle particle = particle(cosmetic.particle());
+            if (particle == null) {
                 continue;
             }
-            player.getWorld().spawnParticle(particle,
-                    player.getLocation().add(0, 0.15, 0), 3, 0.25, 0.05, 0.25);
+            player.getWorld().spawnParticle(particle, player.getLocation().add(0, 0.15, 0), 3, 0.25, 0.05, 0.25);
+        }
+    }
+
+    public static Particle particle(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return Particle.valueOf(raw.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException unknown) {
+            return null;
+        }
+    }
+
+    public static Sound sound(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return Sound.valueOf(raw.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException unknown) {
+            return null;
         }
     }
 }

@@ -35,6 +35,8 @@ public final class GaleCommand implements CommandExecutor {
             case "pass" -> pass(sender, args);
             case "grant" -> grant(sender, args);
             case "bounty" -> bounty(sender);
+            case "locker" -> locker(sender);
+            case "achievements" -> achievements(sender);
             default -> false;
         };
     }
@@ -233,8 +235,8 @@ public final class GaleCommand implements CommandExecutor {
                 sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/pass trail off"));
                 return true;
             }
-            plugin.pass().clearTrail(owner);
-            owner.sendMessage(Msg.parse(plugin.prefix() + "<gray>Trail off. Buy another in <white>/pass shop<gray>."));
+            plugin.pass().unequip(owner, ru.galeheart.core.pass.Cosmetic.Type.TRAIL);
+            owner.sendMessage(Msg.parse(plugin.prefix() + "<gray>Trail off. Gear up in <white>/locker<gray>."));
             return true;
         }
 
@@ -254,6 +256,24 @@ public final class GaleCommand implements CommandExecutor {
             return true;
         }
         plugin.passGui().open(player);
+        return true;
+    }
+
+    private boolean locker(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Use /locker in game."));
+            return true;
+        }
+        plugin.lockerGui().open(player);
+        return true;
+    }
+
+    private boolean achievements(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Use /achievements in game."));
+            return true;
+        }
+        plugin.achievementsGui().open(player);
         return true;
     }
 

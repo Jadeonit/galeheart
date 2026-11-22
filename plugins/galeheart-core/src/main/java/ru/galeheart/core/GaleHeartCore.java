@@ -12,6 +12,9 @@ import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
 import ru.galeheart.core.notify.DiscordNotifier;
 import ru.galeheart.core.onboarding.StarterKit;
+import ru.galeheart.core.achievement.AchievementGui;
+import ru.galeheart.core.achievement.AchievementManager;
+import ru.galeheart.core.pass.LockerGui;
 import ru.galeheart.core.pass.PassGui;
 import ru.galeheart.core.pass.PassManager;
 import ru.galeheart.core.quest.QuestManager;
@@ -31,6 +34,9 @@ public final class GaleHeartCore extends JavaPlugin {
     private BountyManager bounty;
     private PassManager pass;
     private PassGui passGui;
+    private LockerGui lockerGui;
+    private AchievementManager achievements;
+    private AchievementGui achievementGui;
     private ChatManager chat;
     private StarterKit kit;
 
@@ -53,15 +59,21 @@ public final class GaleHeartCore extends JavaPlugin {
         bounty = new BountyManager(this);
         pass = new PassManager(this);
         passGui = new PassGui(this);
+        lockerGui = new LockerGui(this);
+        achievements = new AchievementManager(this);
+        achievementGui = new AchievementGui(this);
         chat = new ChatManager(this);
         kit = new StarterKit(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(passGui, this);
+        getServer().getPluginManager().registerEvents(lockerGui, this);
+        getServer().getPluginManager().registerEvents(achievementGui, this);
 
         GaleCommand executor = new GaleCommand(this);
-        for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "grant", "bounty"}) {
+        for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "grant", "bounty",
+                "locker", "achievements"}) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(executor);
@@ -124,6 +136,18 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public PassGui passGui() {
         return passGui;
+    }
+
+    public LockerGui lockerGui() {
+        return lockerGui;
+    }
+
+    public AchievementManager achievements() {
+        return achievements;
+    }
+
+    public AchievementGui achievementsGui() {
+        return achievementGui;
     }
 
     public ChatManager chat() {

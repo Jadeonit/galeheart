@@ -1,11 +1,13 @@
 package ru.galeheart.core;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -14,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import ru.galeheart.core.achievement.AchievementManager;
 import ru.galeheart.core.data.PlayerData;
 import ru.galeheart.core.util.Msg;
 
@@ -47,6 +50,8 @@ public final class CoreListener implements Listener {
         plugin.quests().grant(player);
         plugin.bounty().ensureTarget(player);
         plugin.store().write(data);
+        plugin.pass().playJoinEffect(player);
+        plugin.achievements().check(player);
 
         long left = plugin.combat().protectionLeftMillis(player);
         if (left > 0) {
@@ -73,8 +78,10 @@ public final class CoreListener implements Listener {
         }
         plugin.hearts().onDeath(victim, victim.getKiller());
         plugin.bounty().handleDeath(victim, victim.getKiller());
+        plugin.achievements().increment(victim, AchievementManager.Counter.DEATH, 1);
         if (victim.getKiller() != null && !victim.getKiller().equals(victim)) {
             plugin.pass().onKill(victim.getKiller(), victim);
+            plugin.achievements().increment(victim.getKiller(), AchievementManager.Counter.KILL, 1);
         }
     }
 
@@ -122,6 +129,17 @@ public final class CoreListener implements Listener {
             return;
         }
         plugin.quests().onKill(killer, event.getEntityType());
+        plugin.achievements().increment(killer, AchievementManager.Counter.MOB, 1);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        plugin.achievements().increment(player, AchievementManager.Counter.BLOCK, 1);
+        Material type = event.getBlock().getType();
+        if (type == Material.DIAMOND_ORE || type == Material.DEEPSLATE_DIAMOND_ORE) {
+            plugin.achievements().increment(player, AchievementManager.Counter.DIAMOND, 1);
+        }
     }
 
     @EventHandler

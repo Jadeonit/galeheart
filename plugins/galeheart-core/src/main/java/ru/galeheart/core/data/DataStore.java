@@ -92,6 +92,22 @@ public final class DataStore {
             }
         }
         player.trail = section.getString("trail", "");
+        player.title = section.getString("title", "");
+        player.joinEffect = section.getString("join-effect", "");
+        player.kills = section.getInt("kills", 0);
+        player.deaths = section.getInt("deaths", 0);
+        player.blocksMined = section.getInt("blocks-mined", 0);
+        player.diamondsMined = section.getInt("diamonds-mined", 0);
+        player.mobsKilled = section.getInt("mobs-killed", 0);
+        player.playMinutes = section.getInt("play-minutes", 0);
+        player.bountyDone = section.getInt("bounty-done", 0);
+        player.lifetimeShards = section.getInt("lifetime-shards", 0);
+        player.shardsSpent = section.getInt("shards-spent", 0);
+        for (String achievement : section.getStringList("achievements")) {
+            if (!achievement.isBlank()) {
+                player.achievements.add(achievement);
+            }
+        }
 
         ConfigurationSection quests = section.getConfigurationSection("quests");
         if (quests != null) {
@@ -133,6 +149,18 @@ public final class DataStore {
         }
         data.set(path + ".owned", new java.util.ArrayList<>(player.owned));
         data.set(path + ".trail", player.trail);
+        data.set(path + ".title", player.title);
+        data.set(path + ".join-effect", player.joinEffect);
+        data.set(path + ".kills", player.kills);
+        data.set(path + ".deaths", player.deaths);
+        data.set(path + ".blocks-mined", player.blocksMined);
+        data.set(path + ".diamonds-mined", player.diamondsMined);
+        data.set(path + ".mobs-killed", player.mobsKilled);
+        data.set(path + ".play-minutes", player.playMinutes);
+        data.set(path + ".bounty-done", player.bountyDone);
+        data.set(path + ".lifetime-shards", player.lifetimeShards);
+        data.set(path + ".shards-spent", player.shardsSpent);
+        data.set(path + ".achievements", new java.util.ArrayList<>(player.achievements));
         data.set(path + ".progress", null);
         for (Map.Entry<String, Integer> entry : player.questProgress.entrySet()) {
             data.set(path + ".progress." + entry.getKey(), entry.getValue());

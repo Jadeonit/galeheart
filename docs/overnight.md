@@ -131,6 +131,23 @@ ready; add music in the app.
 
 Then open the server to players and watch `latest.log` for the first hour.
 
+## Night 2 — pass rework (Nov 21 → 22)
+
+- Season pass rebuilt: 100 levels, XP curve `90 + 6 × (level - 1)`, total 38,700.
+  Every level pays 4 shards, ten levels unlock a cosmetic outright.
+- Locker added (`/locker`): three labelled tabs — titles, trails, join effects —
+  with 22 items, buy / equip / remove, pagination, glow on owned, level locks.
+- Join effects implemented: particles plus a sound burst on login.
+- Pass menu redesigned: player head with XP bar, locker, achievements and the next
+  four rewards, glass border that shifts with your level.
+- Achievements added (`/achievements`): 20 goals over PvP, survival, mining,
+  combat, hearts, bounty, season, economy and quests, each paying shards, with
+  progress bars and pagination.
+- `#minecraft-chat` purged to zero messages.
+- Test leftover netherite sword cleared from the world; dropped items killed.
+- Server: 0 errors, config verified on disk (100 levels, 22 cosmetics, 20
+  achievements, bounty still paused until launch).
+
 ## Known cosmetic issues
 
 - DiscordSRV warns that it cannot set the `#minecraft-chat` topic: needs Manage

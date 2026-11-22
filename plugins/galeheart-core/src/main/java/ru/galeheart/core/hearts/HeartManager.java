@@ -55,6 +55,7 @@ public final class HeartManager {
         data.hearts = clamped;
         plugin.store().write(data);
         apply(player);
+        plugin.achievements().check(player);
     }
 
     public void apply(Player player) {
