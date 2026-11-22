@@ -37,6 +37,7 @@ public final class GaleCommand implements CommandExecutor {
             case "bounty" -> bounty(sender);
             case "locker" -> locker(sender);
             case "achievements" -> achievements(sender);
+            case "cosmetic" -> cosmetic(sender, args);
             default -> false;
         };
     }
@@ -274,6 +275,29 @@ public final class GaleCommand implements CommandExecutor {
             return true;
         }
         plugin.achievementsGui().open(player);
+        return true;
+    }
+
+    private boolean cosmetic(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("galeheart.admin")) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>No permission."));
+            return true;
+        }
+        if (args.length < 3 || !args[0].equalsIgnoreCase("give")) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>/cosmetic give <player> <id>"));
+            return true;
+        }
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>Player not found."));
+            return true;
+        }
+        if (plugin.pass().give(target, args[2])) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<green>Gave <white>" + args[2] + "<green> to "
+                    + target.getName()));
+        } else {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<red>Unknown id, or already owned."));
+        }
         return true;
     }
 

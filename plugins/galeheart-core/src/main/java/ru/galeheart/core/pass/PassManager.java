@@ -336,6 +336,24 @@ public final class PassManager {
         return true;
     }
 
+    /** Grants a cosmetic directly, used for donations and compensation. */
+    public boolean give(Player player, String id) {
+        Cosmetic cosmetic = cosmetic(id);
+        if (cosmetic == null) {
+            return false;
+        }
+        PlayerData data = plugin.store().get(player.getUniqueId());
+        if (data.owned.contains(id)) {
+            return false;
+        }
+        data.owned.add(id);
+        plugin.store().write(data);
+        player.sendMessage(Msg.parse(plugin.prefix() + "<green>You received <white>" + cosmetic.display()
+                + " <dark_gray>(" + cosmetic.type().label() + ")<gray> — see <white>/locker"));
+        player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.7f, 1.3f);
+        return true;
+    }
+
     /** Equips an owned cosmetic, replacing whatever was equipped in that slot. */
     public void equip(Player player, String id) {
         Cosmetic cosmetic = cosmetic(id);

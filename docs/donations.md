@@ -10,6 +10,7 @@ Hearts are earned in game, never bought.
 | Supporter | $5 | `supporter` | `[Supporter]` chat prefix, Supporter role in Discord, name on the wall of thanks |
 | Patron | $15 | `patron` | `[Patron]` prefix, everything from Supporter, three cosmetic titles, particle trail on join |
 | Season Pass | $7 | `pass` | `[Pass]` prefix, the paid cosmetic track for one season (levels are earned, not granted) |
+| Founder | first 20 supporters | cosmetic `founder` | permanent `[Founder]` title, granted by hand |
 
 Prices are set in `store/index.html`. Change them there and in this table together.
 
@@ -45,6 +46,12 @@ Examples:
 
 `/grant` adds the LuckPerms group, prints a confirmation and posts a `Donation`
 embed to `#announcements` (published) and `#events`.
+
+Founder title, one extra command after the rank:
+
+```
+/cosmetic give <player> founder
+```
 
 To revoke:
 

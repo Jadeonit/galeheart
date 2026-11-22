@@ -262,6 +262,13 @@ pass:
     particle: ELECTRIC_SPARK
     sound: ENTITY_LIGHTNING_BOLT_THUNDER
     icon: LIGHTNING_ROD
+  - type: TITLE
+    id: founder
+    display: <gold>Founder
+    cost: 99999
+    unlock-level: 1
+    prefix: '&6[Founder] '
+    icon: GOLD_INGOT
 bounty:
   enabled: false
   random-days: true
