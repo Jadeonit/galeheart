@@ -57,6 +57,14 @@ public final class CoreListener implements Listener {
         if (left > 0) {
             player.sendActionBar(Msg.parse("<gray>Protection: <white>" + (left / 3_600_000L) + "h left"));
         }
+
+        if (data.firstJoin != 0L && System.currentTimeMillis() - data.firstJoin > 60_000L
+                && plugin.getConfig().getBoolean("chat.join-hint", true)) {
+            String hint = plugin.getConfig().getString("chat.join-hint-text",
+                    "<gray>Lifesteal + hostile weather. <white>/quest<gray> Nether and End, "
+                            + "<white>/bounty<gray> targets, <white>/pass<gray> season, <white>/discord<gray> community.");
+            player.sendMessage(Msg.parse(plugin.prefix() + hint));
+        }
     }
 
     @EventHandler

@@ -61,6 +61,9 @@ spawn:
   platform-radius: 5
 chat:
   enabled: true
+  join-hint: true
+  join-hint-text: '<gray>Lifesteal + hostile weather. <white>/quest<gray>, <white>/bounty<gray>,
+    <white>/pass<gray>. Discord: <click:open_url:''https://discord.gg/g9XANw8Wa''><aqua>discord.gg/g9XANw8Wa</aqua></click>'
   max-length: 200
   caps-percent: 70
   spam-window-seconds: 8
