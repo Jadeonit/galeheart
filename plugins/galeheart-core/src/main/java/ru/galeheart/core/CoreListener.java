@@ -72,6 +72,31 @@ public final class CoreListener implements Listener {
                             + "someone there can answer you.");
             player.sendMessage(Msg.parse(plugin.prefix() + alone));
         }
+
+        grantEventCosmetic(player);
+    }
+
+    /** Hands out the event cosmetic while the window is open, once per player. */
+    private void grantEventCosmetic(Player player) {
+        String cosmetic = plugin.getConfig().getString("event.og-cosmetic", "");
+        String until = plugin.getConfig().getString("event.og-until", "");
+        if (cosmetic == null || cosmetic.isBlank() || until == null || until.isBlank()) {
+            return;
+        }
+        try {
+            if (java.time.Instant.now().isAfter(java.time.Instant.parse(until))) {
+                return;
+            }
+        } catch (RuntimeException malformed) {
+            return;
+        }
+        if (plugin.store().get(player.getUniqueId()).owned.contains(cosmetic)) {
+            return;
+        }
+        if (plugin.pass().give(player, cosmetic)) {
+            player.sendMessage(Msg.parse(plugin.prefix() + "<gold>You were here on the first night. "
+                    + "<white>[OG]<gray> is yours — equip it with <white>/locker<gray>."));
+        }
     }
 
     @EventHandler

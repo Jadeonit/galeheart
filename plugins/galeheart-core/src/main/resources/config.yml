@@ -275,6 +275,13 @@ pass:
     unlock-level: 1
     prefix: '&6[Founder] '
     icon: GOLD_INGOT
+  - type: TITLE
+    id: og
+    display: <gold>OG
+    cost: 99999
+    unlock-level: 1
+    prefix: '&6[OG] '
+    icon: GOLDEN_HELMET
 bounty:
   enabled: false
   random-days: true
@@ -446,3 +453,6 @@ news:
   enabled: true
   page-size: 4
   cache-seconds: 120
+event:
+  og-cosmetic: og
+  og-until: '2026-11-27T06:00:00Z'
