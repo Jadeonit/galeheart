@@ -38,6 +38,7 @@ public final class GaleCommand implements CommandExecutor {
             case "locker" -> locker(sender);
             case "achievements" -> achievements(sender);
             case "cosmetic" -> cosmetic(sender, args);
+            case "news" -> news(sender, args);
             default -> false;
         };
     }
@@ -257,6 +258,23 @@ public final class GaleCommand implements CommandExecutor {
             return true;
         }
         plugin.passGui().open(player);
+        return true;
+    }
+
+    private boolean news(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Msg.parse(plugin.prefix() + "<gray>Use /news in game."));
+            return true;
+        }
+        int page = 1;
+        if (args.length >= 1) {
+            try {
+                page = Integer.parseInt(args[0]);
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+        plugin.news().show(player, page);
         return true;
     }
 

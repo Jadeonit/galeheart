@@ -10,6 +10,7 @@ import ru.galeheart.core.chat.ChatManager;
 import ru.galeheart.core.command.GaleCommand;
 import ru.galeheart.core.data.DataStore;
 import ru.galeheart.core.hearts.HeartManager;
+import ru.galeheart.core.news.NewsManager;
 import ru.galeheart.core.notify.DiscordNotifier;
 import ru.galeheart.core.onboarding.StarterKit;
 import ru.galeheart.core.achievement.AchievementGui;
@@ -39,6 +40,7 @@ public final class GaleHeartCore extends JavaPlugin {
     private AchievementGui achievementGui;
     private ChatManager chat;
     private StarterKit kit;
+    private NewsManager news;
 
     private String prefix = "<gradient:#4FA9C9:#C8324B>[GaleHeart]</gradient> ";
 
@@ -64,6 +66,7 @@ public final class GaleHeartCore extends JavaPlugin {
         achievementGui = new AchievementGui(this);
         chat = new ChatManager(this);
         kit = new StarterKit(this);
+        news = new NewsManager(this);
 
         getServer().getPluginManager().registerEvents(new CoreListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
@@ -73,7 +76,7 @@ public final class GaleHeartCore extends JavaPlugin {
 
         GaleCommand executor = new GaleCommand(this);
         for (String name : new String[]{"hearts", "top", "season", "quest", "pass", "grant", "bounty",
-                "locker", "achievements", "cosmetic"}) {
+                "locker", "achievements", "cosmetic", "news"}) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(executor);
@@ -156,6 +159,10 @@ public final class GaleHeartCore extends JavaPlugin {
 
     public StarterKit kit() {
         return kit;
+    }
+
+    public NewsManager news() {
+        return news;
     }
 
     public String prefix() {

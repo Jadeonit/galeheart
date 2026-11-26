@@ -34,6 +34,10 @@ commands:
     description: Grant a cosmetic directly
     usage: /cosmetic give <player> <id>
     permission: galeheart.admin
+  news:
+    description: Latest announcements from Discord
+    usage: /news [page]
+    aliases: [ announcements ]
   grant:
     description: Grant a donation rank
     usage: /grant <player> <rank>

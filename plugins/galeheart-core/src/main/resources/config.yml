@@ -298,6 +298,7 @@ discord:
   bot-token: ''
   channel-id: ''
   crosspost: true
+  guild-id: '1573099398781599815'
 achievements:
   enabled: true
   list:
@@ -441,3 +442,7 @@ achievements:
     shards: 250
     trigger: QUESTS
     amount: 2
+news:
+  enabled: true
+  page-size: 4
+  cache-seconds: 120
