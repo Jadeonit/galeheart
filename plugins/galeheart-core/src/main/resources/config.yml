@@ -74,6 +74,9 @@ chat:
   - https://
   - free nitro
   - buy now
+  alone-hint: true
+  alone-hint-text: <gray>You are the only one online right now. This chat is bridged
+    to Discord — someone there can answer you.
 pass:
   enabled: true
   levels: 100

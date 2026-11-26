@@ -65,6 +65,13 @@ public final class CoreListener implements Listener {
                             + "<white>/bounty<gray> targets, <white>/pass<gray> season, <white>/discord<gray> community.");
             player.sendMessage(Msg.parse(plugin.prefix() + hint));
         }
+
+        if (plugin.getConfig().getBoolean("chat.alone-hint", true) && Bukkit.getOnlinePlayers().size() == 1) {
+            String alone = plugin.getConfig().getString("chat.alone-hint-text",
+                    "<gray>You are the only one online right now. This chat is bridged to Discord — "
+                            + "someone there can answer you.");
+            player.sendMessage(Msg.parse(plugin.prefix() + alone));
+        }
     }
 
     @EventHandler
